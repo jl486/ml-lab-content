@@ -1,0 +1,77 @@
+---
+id: missing-data
+name: Missing data
+description: Dropping missing values sometimes isn't good enough, so we'll try some other techniques.
+sectionName: Data cleaning
+---
+
+Missing values are almost always an issue with data. For example,
+
+* a house without a pool won't have data for pool quality
+* a weather station fails to record temperature for a few hours because of equipment malfunction
+* a participant of a survey skips some questions
+
+Most machine learning models can't handle data with missing values. Scikit-learn models will just return an error. If a model does work with missing values, then it can cause inaccurate predictions and biased results. How do we deal with missing values?
+
+## Solutions
+
+### Drop missing columns
+
+The simplest method is to **drop missing columns**, which we talked about in the <Link href="/courses/intro-to-ml/data-cleaning#missing-values">data cleaning</Link> lesson from the previous course:
+
+<Image src="/content/courses/02-intermediate-ml/assets/dropna-cols.png" invert />
+
+Most of the time, you should avoid dropping columns. But if a column has too many missing values (like 90% missing) and doesn't give much information about the target, it makes sense to drop it.
+
+We're not considering dropping **rows** here because the only case when you would do this is if you have a very large dataset and only a very small number of rows have missing values. In practice, datasets usually have much more missing data, so dropping **columns** is often the better choice.
+
+### Imputation
+
+Instead of dropping columns, we can use <Link href="/glossary#imputation">imputation</Link>, which **fills missing values** with some number. Here is an example of imputation that fills missing values with the mean of the column:
+
+<Image src="/content/courses/02-intermediate-ml/assets/imputation.png" invert />
+
+Imputation often leads to more accurate models than if you just dropped missing rows or columns. But imputation might not be good if there's too much missing data.
+
+We will use <Link href="https://scikit-learn.org/stable/modules/generated/sklearn.impute.SimpleImputer.html">`SimpleImputer`</Link> to replace missing values in numeric columns with the mean along them.
+
+```py
+from sklearn.impute import SimpleImputer
+
+numeric_cols = df.select_dtypes(include='number').columns
+
+numeric_imputer = SimpleImputer(strategy='mean')
+df[numeric_cols] = numeric_imputer.fit_transform(df[numeric_cols])
+```
+
+However, you need to use other strategies to impute non-numeric variables. We'll talk about this in the next lesson.
+
+## Check-in
+
+Here's a question about applying the methods we talked about.
+
+<Question>
+  <QuestionDescription>
+    You are working with a dataset with 1000 samples and it has some missing values. For each situation, which handling method would be the most appropriate?
+  </QuestionDescription>
+  <QuestionChoices>
+    <QuestionChoice>
+      A column is missing half of its values, so you should drop rows.
+      <QuestionChoiceExplanation>
+        Dropping rows in this case means you'll drop half of the dataset, which is worse. It would be better to drop columns.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+    <QuestionChoice correct>  
+      There is a total of 100 missing numbers in the `age` column so you should use mean imputation.
+      <QuestionChoiceExplanation>
+        Only 10% of the values are missing so it's a good idea to impute with the mean.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+    <QuestionChoice>
+      80% of the values are missing in a feature that has a high correlation with the target and is useful, so you should use imputation.
+      <QuestionChoiceExplanation>
+        Even if this feature is useful, imputation would create uncertainty unless you have domain knowledge to justify an imputation method.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+  </QuestionChoices>
+</Question>

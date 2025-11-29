@@ -1,0 +1,39 @@
+---
+id: random-forests
+name: Random forests
+description: A more sophisticated tree-based model.
+sectionName: Machine learning
+---
+
+It's hard to find the best balance between underfitting and overfitting with decision trees. However, people have thought of using multiple decisions trees at once, and it has improved predictions. This specific method is called <Link href="/glossary#random-forest">random forest</Link>.
+
+## How it works
+
+The random forest is a <Link href="/glossary#ensemble">ensemble</Link> of decision trees. Each decision tree is trained on a different part of the same dataset, and their results are *averaged* (because we have a regression problem). Random forests often predict much more accurately than a single decision tree.
+
+<Image src="/content/courses/01-intro-to-ml/assets/random-forest.png" invert />
+
+## Using the model
+
+Scikit-learn provides a <Link href="https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html">`RandomForestRegressor`</Link> class, and we can use it similarly to `DecisionTreeRegressor`:
+
+```py
+from sklearn.ensemble import RandomForestRegressor
+
+X_train, X_val, y_train, y_val = train_test_split(X, y, random_state=0)
+
+model = RandomForestRegressor(random_state=0)
+model.fit(X_train, y_train)
+
+y_pred = model.predict(X_val)
+
+print(mean_absolute_error(y_val, y_pred))
+```
+
+Switching to a random forest model will quickly improve our predictions. But there's still a lot of room for improvement.
+
+You can try tuning the parameters of the random forest model and see if you can decrease the MAE further. The <Link href="https://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestRegressor.html">documentation</Link> lists all the parameters.
+
+## The end
+
+That's it for Introduction to ML! Congratulations. You've already picked up the basics and built your first model. I hope you'll join me in the <Link href="/courses/intermediate-ml">next course</Link>, where we'll look into modern techniques to make even better predictions.

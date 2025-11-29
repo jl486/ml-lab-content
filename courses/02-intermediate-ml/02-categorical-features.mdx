@@ -1,0 +1,124 @@
+---
+id: categorical-features
+name: Categorical features
+description: Much of the data out there isn't numeric, and models can't directly understand words.
+sectionName: Data preprocessing
+---
+
+So far, we only looked at numerical features like the number of rooms or lot area of a house. But a large part of the housing dataset (43 features!) are categorical.
+
+A <Link href="/glossary#categorical-feature">categorical feature</Link> has a specific number of possible values. For example,
+
+* choices for customer satisfation in a survey could be "very unsatisfied", "unsatisfied", "neutral", "satisfied", or "very satisfied".
+* suevey respondents fill out "New York", "Los Angeles", "Paris", and "London" for their city name.
+
+You will get an error if you try to give categorical data to most Python machine learning models. So, let's compare a few ways to solve this issue.
+
+## Solutions
+
+### Drop categorical features
+
+Similar to missing values, the easiest workaround is to just remove the categorical features. You should only do this if the feature is uninformative for predicting the target.
+
+You can do this with the `exclude` parameter of <Link href="https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.select_dtypes.html">`select_dtypes()`</Link>:
+
+```py
+df = df.select_dtypes(exclude='object')
+```
+
+### Ordinal encoding
+
+This is the most straightforward way to turn categories into numbers. <Link href="/glossary#ordinal-encoding">Ordinal encoding</Link> replaces a category with a unique number:
+
+<Image src="/content/courses/02-intermediate-ml/assets/ordinal-encoding.png" invert />
+
+This example works well because the categories of `satisfaction` have a natural ranking. Variables like this are called <Link href="/glossary#ordinal-variable">ordinal variables</Link>.
+
+Encoding ordinal variables with ordinal encoding is most effective for tree-based model like decision trees, random forests, or gradient boosted trees because they split data based on thresholds. For example, the model can split at `satisfaction <= 3` to separate the satisfied customers from the rest.
+
+We can use <Link href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.OrdinalEncoder.html">`OrdinalEncoder`</Link> to make ordinal encodings.
+
+```py
+from sklearn.preprocessing import OrdinalEncoder
+
+# object dtype means non-numeric
+categorical_cols = df.select_dtypes(include='object').columns
+
+encoder = OrdinalEncoder()
+df = pd.DataFrame(
+    encoder.fit_transform(df[categorical_cols]),
+    columns=categorical_cols,
+    index=df.index
+)
+```
+
+Notice that we converted the encoded columns to a DataFrame because `fit_transform()` returns a numpy array, which we can't really work with. We also need to set the column names and indices back.
+
+### One-hot encoding
+
+<Link href="/glossary#one-hot-encoding">One-hot encoding</Link> creates a new column for each unique category in the original feature. It puts a `1` in the column that matches the category, and `0` in all the others.
+
+<Image src="/content/courses/02-intermediate-ml/assets/one-hot-encoding.png" invert />
+
+One-hot encoding treats categories as separate binary features. This makes one-hot encoding useful for encoding <Link href="/glossary#nominal-variable">nominal variables</Link>, which *don't* have an inherent ordering (red is greater than blue doesn't make sense).
+
+We can use <Link href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.OneHotEncoder.html">`OneHotEncoder`</Link> to create one-hot encoded features:
+
+```py
+from sklearn.preprocessing import OneHotEncoder
+
+categorical_cols = df.select_dtypes(include='object').columns
+
+encoder = OneHotEncoder(sparse_output=False)
+encoded_df = pd.DataFrame(
+    encoder.fit_transform(df[categorical_cols]),
+    columns=encoder.get_feature_names_out(categorical_cols)
+)
+```
+
+This time, we set the columns to what the encoder generates using `get_feature_names_out()`. This is because one-hot encoding creates new columns instead of just replacing existing data.
+
+## Check-in
+
+Paste and run the code below to see the possible unique values for each categorical feature. This may help with the question.
+
+```py
+for col_name in df.select_dtypes(include='object').columns:
+    print(f'{col_name}: {df[col_name].unique()}')
+```
+
+<Question>
+  <QuestionDescription>
+    Which feature below do you think should be encoded using ordinal encoding?
+  </QuestionDescription>
+  <QuestionChoices>
+    <QuestionChoice>
+      `lot_config` (Lot configuration)
+      <QuestionChoiceExplanation>
+        The lot configurations don't have a natural ranking.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+    <QuestionChoice>  
+      `roof_matl` (Roof material)
+      <QuestionChoiceExplanation>
+        The list of roof materials don't have any natural ranking.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+    <QuestionChoice correct>
+      `exter_cond` (Exterior condition)
+      <QuestionChoiceExplanation>
+        Yes! The exterior condition is measured from poor, fair, typical, good, and excellent.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+    <QuestionChoice>
+      `exterior1st` (Type of exterior covering on house)
+      <QuestionChoiceExplanation>
+        The types of exterior coverings don't have a natural ranking.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+  </QuestionChoices>
+</Question>
+
+## Conclusion
+
+There's one more important data preprocessing step after encoding that you should be aware about. While it's not always necessary, <Link href="/glossary#scaling">scaling</Link> data can improve your models quite a bit. We'll talk about it next.

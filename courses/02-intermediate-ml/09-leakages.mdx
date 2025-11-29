@@ -1,0 +1,126 @@
+---
+id: data-leakage
+name: Data leakage
+description: Avoid this problem that could quietly screw you over.
+sectionName: Common mistakes
+---
+
+You train a model, cross-validate carefully, and the error is extremely low, too low to be true. Then you deploy it, and your model suddenly performs worse than random guessing!
+
+This is an example of what could happen because of a *data leakage*. Data leakages are one of the most subtle mistakes in ML, so it is very important that you know how to recognize if this happens.
+
+## Introduction
+
+A <Link href="/glossary#data-leakage">data leakage</Link> is when you train a model on information that wouldn't be available when you use the model for prediction. This is dangerous because:
+
+* it could makes the model look accurate during training, but it will be inaccurate in production.
+* it's usually hard to detect, especially in complex data pipelines.
+
+## Types of data leakage
+
+Now, let's see where data leakages can happen.
+
+### Target leakage
+
+**Target leakage** occurs when the training set includes data that wouldn't realistically be available while making predictions.
+
+Here is a situation: imagine you're predicting whether a customer will default on a loan for a bank. These are some of the features in your dataset:
+
+* `age`
+* `income`: annual income
+* `credit_score`
+* `avg_cur`: average credit utilization ratio (total debt : total credit available)
+* `charged_off`: whether a loan was written off as a loss
+* `active`: whether a loan is being repaid or not
+
+Is there a target leakage?
+
+Let's examine the feature `charged_off`. An account is "charged off" when the bank stopped trying to collect the debt and most likely sent it to a debt collection agency.
+
+So, the feature `charged_off` would usually be `False`, but it will be changed to `True` *after* a loan has gone into default. This is definitely a target leakage.
+
+The model will learn that `charged_off` is directly connected to a default. This means it will be very accurate during training, but very inaccurate in production, where we don't have that future information.
+
+To avoid target leakage, we should drop any feature that can only be determined after the target is known.
+
+### Train-test contamination
+
+A **train-test contamination** is when validation data influences training data in some way.
+
+One way this can happen is if you do preprocessing before splitting your dataset. In this scenario, you would be letting steps like scaling or imputing draw on the entire dataset, meaning the model learns from data it shouldn't see, like the validation set.
+
+Using feature selection techniques (such as mutual information ranking) on the whole dataset also creates a train-test contamination for the same reason above.
+
+The key takeaway is to make sure you're not running preprocesing steps or feature selection on the entire dataset. Using scikit-learn's <Link href="/courses/intermediate-ml/pipelines">pipelines</Link> makes it easier to remember.
+
+## Example
+
+Consider a problem where we want to predict food delivery times using this dataset:
+
+<Image src="/content/courses/02-intermediate-ml/assets/leakage-example.png" invert />
+
+Our target `y` will be a Series with the delivery times, and the features `X` will be a DataFrame with the rest of the columns.
+
+Some feature are categorical, so let's do a bit of preprocessing.
+
+<MiniCollapsible>
+  <MiniCollapsibleTrigger>Preprocessing code</MiniCollapsibleTrigger>
+  <MiniCollapsibleContent>
+    ```py
+    numeric_cols = X.select_dtypes(include='number').columns
+    categorical_cols = X.select_dtypes(include='object').columns
+
+    numeric_transformer = Pipeline([
+        ('imputer', SimpleImputer(strategy='mean')),
+    ])
+
+    categorical_transformer = Pipeline([
+        ('imputer', SimpleImputer(strategy='constant', fill_value='None')),
+        ('encoder', OneHotEncoder())
+    ])
+
+    preprocessor = ColumnTransformer(
+        transformers=[
+            ('num', numeric_transformer, numeric_cols),
+            ('cat', categorical_transformer, categorical_cols)
+        ]
+    )
+    ```
+  </MiniCollapsibleContent>
+</MiniCollapsible>
+
+Now we can train a model on the dataset. It's a good idea to use cross-validation here because the dataset is relatively small with only 1000 rows. Note that instead of MAE, we're using *mean absolute percentage error* (MAPE) so we can more easily interpret the accuracy.
+
+```py
+model = RandomForestRegressor(random_state=0)
+
+pipe = make_pipeline(preprocessor, model)
+
+cv_scores = -cross_val_score(pipe, X, y, cv=5, scoring='neg_mean_absolute_percentage_error')
+print(cv_scores.mean())
+```
+
+After running this code, we get the output:
+
+```
+0.13655972458620833
+```
+
+Since we're using MAPE, the output means that our predictions are off by about 14% on average. This error is perfectly reasonable given the amount of data we have (something like `0.01` would be a red flag).
+
+But one of the features is a source of leakage. Take a look at the feature `preparation_time_min`, which represents the amount of time the restaurant took to prepare the order. Is it possible to determine this right when the order is made?
+
+When we train and test a random forest after dropping `preparation_time_min`, we get a MAPE of:
+
+```
+0.19790122305060445
+```
+
+The error increased considerably here. However, if we kept the leakage source, then our model would learn the wrong patterns and would perform terribly because it wouldn't have that extra information in production.
+
+## Conclusion
+
+Data leakages can be quite hard to detect. But you can prevent it by
+
+* doing some data exploration while keeping logic in mind
+* making sure you properly separate the train and test sets

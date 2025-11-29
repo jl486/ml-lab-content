@@ -1,0 +1,65 @@
+---
+id: cross-validation
+name: Cross-validation
+description: A more accurate technique to assess your models.
+sectionName: Machine learning
+---
+
+## Introduction
+
+So far, you only learned how to evaluate your model with a <Link href="/glossary#validation-set">validation set</Link>.
+
+But the score could be misleading. The score you get all depends on what data ended up in the validation set. This means that one random split might make the model look *better* than it actually is, while another random split would the model look *worse*. Also, you're only using a part of the dataset for training, which wastes valuable information!
+
+## Cross-validation
+
+In <Link href="/glossary#cross-validation">cross-validation</Link>, we split the dataset into several unique subsets. Each subset is used once for validation and the remaining data is used for training. This gives us multiple measures on model performance, which we can use to more accurately see how well our model generalizes. The type we'll talk about is called **k-fold cross validation**.
+
+For example, we can divide a dataset into 5 folds, running a modeling process on each fold like this:
+
+<Image src="/content/courses/02-intermediate-ml/assets/cross-validation.png" invert />
+
+## Use case
+
+Cross-validation gives us a more reliable measure of model performance. The tradeoff is that it takes longer to run since it has to run the same modeling process multiple times. Most of the time, cross-validation is
+
+* **useful** if you have a small dataset, since running the modeling process a few times would typically be fast.
+* **not useful** for large datasets because a single validation set is usually large enough to give a stable validation score to the model, making extra modeling runs unnecessary.
+
+<MiniCollapsible>
+  <MiniCollapsibleTrigger>What do you mean by *stable validation score*?</MiniCollapsibleTrigger>
+  <MiniCollapsibleContent>
+    When I say the validation score will be *stable*, I mean that when the dataset is large enough, the model's error won't change much even if you split the data differently.
+
+    With a lot of data, one validation split would be sufficiently representative of the entire dataset.
+  </MiniCollapsibleContent>
+</MiniCollapsible>
+
+## Coding it
+
+We can use <Link href="https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.cross_val_score.html">`cross_val_score()`</Link> to get the cross-validation scores:
+
+```py
+from sklearn.model_selection import cross_val_score
+
+scores = -cross_val_score(pipe, X, y, cv=5, scoring='neg_mean_absolute_error')
+```
+
+Note that `pipe` is the same pipeline from <Link href="/courses/intermediate-ml/pipelines">this lesson</Link>.
+
+<MiniCollapsible>
+  <MiniCollapsibleTrigger>Why negative MAE?</MiniCollapsibleTrigger>
+  <MiniCollapsibleContent>
+    It's unusual that we have to use *negative* MAE as the evaluation metric. This is because scikit-learn has a convention where higher scores indicate better performance, so their optimization algorithms can work consistently with different metrics. **This is specific to scikit-learn and you likely won't see the use of negative MAE anywhere else.**
+  </MiniCollapsibleContent>
+</MiniCollapsible>
+
+We can get one final score by calculating the mean of all the cross-validation scores:
+
+```py
+print(scores.mean())
+```
+
+## Conclusion
+
+Cross-validation is a decent upgrade from a simple validation split. It gives us a much more reliable evaluation of model performance, and it's often the standard in ML workflows.

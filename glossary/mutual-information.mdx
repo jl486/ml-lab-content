@@ -1,0 +1,23 @@
+## Mutual information
+
+Quantifies how much information is shared between two variables.
+
+<MiniCollapsible>
+  <MiniCollapsibleTrigger>See formal definition</MiniCollapsibleTrigger>
+  <MiniCollapsibleContent>
+    The mutual information between two random variables $X$ and $Y$ is
+
+    $$
+    I(X;Y) = \sum_{x \in X} \sum_{y \in Y} p(x,y) \log \left(\frac{p(x,y)}{p(x)p(y)}\right)
+    $$
+
+    where
+
+    * $p(x,y)$ is the joint probability of $X = x$ and $Y = y$
+    * $p(x)$ and $p(y)$ are marginal probabilities of $X$ and $Y$
+  </MiniCollapsibleContent>
+</MiniCollapsible>
+
+If the MI between two features is $0$, then they are completely independent. The larger the MI is, the stronger the depenence between the two features are.
+
+Learn more about using mutual information in ML <Link href="/courses/intermediate-ml/feature-selection#mutual-information">here</Link>.

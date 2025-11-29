@@ -1,0 +1,11 @@
+## Robust scaling
+
+Scaling using the median and interquartile range instead of the mean and standard deviation. This makes it robust to outliers.
+
+This is how a raw value $x_i$ in the feature $x$ is scaled using statistics that are robust to outliers:
+
+$$
+x_i' = \frac{x_i - \text{median}(x)}{\text{IQR}(x)}
+$$
+
+where $\text{IQR}(x) = Q_3 - Q_1$, the difference between the 75th and 25th percentiles.

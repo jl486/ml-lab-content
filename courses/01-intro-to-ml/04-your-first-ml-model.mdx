@@ -1,0 +1,126 @@
+---
+id: your-first-ml-model
+name: Your first ML model
+description: Let's build your first model.
+sectionName: Machine learning
+---
+
+## Choosing data
+
+Before we build and train a model, let's see the features we are working with. The `columns` property of a DataFrame contains all the column names. This is how `df.columns` looks like:
+
+```
+Index(['id', 'ms_sub_class', 'ms_zoning', 'lot_frontage', 'lot_area', 'street',
+       'alley', 'lot_shape', 'land_contour', 'utilities', 'lot_config',
+       'land_slope', 'neighborhood', 'condition1', 'condition2', 'bldg_type',
+       'house_style', 'overall_qual', 'overall_cond', 'year_built',
+       'year_remod_add', 'roof_style', 'roof_matl', 'exterior1st',
+       'exterior2nd', 'mas_vnr_type', 'mas_vnr_area', 'exter_qual',
+       'exter_cond', 'foundation', 'bsmt_qual', 'bsmt_cond', 'bsmt_exposure',
+       'bsmt_fin_type1', 'bsmt_fin_sf1', 'bsmt_fin_type2', 'bsmt_fin_sf2',
+       'bsmt_unf_sf', 'total_bsmt_sf', 'heating', 'heating_qc', 'central_air',
+       'electrical', '1st_flr_sf', '2nd_flr_sf', 'low_qual_fin_sf',
+       'gr_liv_area', 'bsmt_full_bath', 'bsmt_half_bath', 'full_bath',
+       'half_bath', 'bedroom_abv_gr', 'kitchen_abv_gr', 'kitchen_qual',
+       'tot_rms_abv_grd', 'functional', 'fireplaces', 'fireplace_qu',
+       'garage_type', 'garage_yr_blt', 'garage_finish', 'garage_cars',
+       'garage_area', 'garage_qual', 'garage_cond', 'paved_drive',
+       'wood_deck_sf', 'open_porch_sf', 'enclosed_porch', '3_ssn_porch',
+       'screen_porch', 'pool_area', 'pool_qc', 'fence', 'misc_feature',
+       'misc_val', 'mo_sold', 'yr_sold', 'sale_type', 'sale_condition',
+       'sale_price'],
+      dtype='object')
+```
+
+### Select the target
+
+Our goal is to predict house prices. The price for each house is in the column `sale_price`. So we set our prediction <Link href="/glossary#target">target</Link> with the code below. The prediction target is conventionally called `y`.
+
+```py
+y = df['sale_price']  # or df.sale_price
+```
+
+`y` is a Series because it is one column from a DataFrame.
+
+### Feature selection
+
+For simplicity, I will choose the features to use. Create the list
+
+```py
+features = ['lot_frontage', 'lot_area', 'year_built', 'total_bsmt_sf', 'gr_liv_area', 'tot_rms_abv_grd']
+```
+
+and create a DataFrame with only these columns. This data is conventionally called `X`.
+
+```py
+X = df[features]
+```
+
+## Decision trees   
+
+For our model, we will use a <Link href="/glossary#decision-tree">decision tree</Link>, a model that makes predictions using a hierarchy of yes-no questions.
+
+### Improving the decision tree
+
+Here is an example of one of the simplest decision trees we can build for our dataset.
+
+<Image src="/content/courses/01-intro-to-ml/assets/decision-tree-small.png" invert />
+
+This model divides the houses into two categories based on the lot area. But it doesn't take into account all the other factors that affect house price such as square footage or the number of rooms.
+
+To capture more factors, we can just add more *splits*:
+
+<Image src="/content/courses/01-intro-to-ml/assets/decision-tree-big.png" invert />
+
+Now we are accounting for *three* features, and there's *four* possible predictions for house price. As we grow the decision tree deeper, our predictions are going to consistently get better, but it stops at a certain point. This is called <Link href="/glossary#convergence">convergence</Link>.
+
+## Building the model
+
+You will use the `DecisionTreeRegressor` from scikit-learn to model the data, one of the most widely used libraries for modeling data.
+
+Here is how you fit a decision tree to the data.
+
+```py
+from sklearn.tree import DecisionTreeRegressor
+
+# Set random_state to ensure the same results on each run
+model = DecisionTreeRegressor(random_state=0)
+
+model.fit(X, y)
+```
+
+There is a bit of randomness in fitting a decision tree, so setting `random_state` ensures reproducible results. This makes it easier to experiment since any improvement in your model won't be due to luck. You can set it to any integer.
+
+Let's see how accurate the model is in predicting some house prices. Paste this in your notebook:
+
+```py
+y_pred = model.predict(X.head(3))
+
+print(X.head(3))
+print('Predictions: ', y_pred)
+print('True values: ', list(y.head(3)))
+```
+
+<Question>
+  <QuestionDescription>
+    About how large was the model's error on average?
+  </QuestionDescription>
+  <QuestionChoices>
+    <QuestionChoice correct>
+      0
+    </QuestionChoice>
+    <QuestionChoice>  
+      1000
+    </QuestionChoice>
+    <QuestionChoice>
+      10000
+    </QuestionChoice>
+    <QuestionChoice>
+      20000
+    </QuestionChoice>
+  </QuestionChoices>
+</Question>
+
+Right now, we're testing the model using the same data it was trained on. This makes it seem like the model is absolutely perfect. In practice, you would use data from new houses and predict the sales prices for those.
+
+In the <Link href="/courses/intro-to-ml/model-evaluation">next lesson</Link>, you'll learn how to properly evalulate your model by splitting the data into separate training and validation sets.

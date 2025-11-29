@@ -1,0 +1,89 @@
+---
+id: pipelines
+name: Pipelines
+description: A useful tool to write sophisticated data preprocessing.
+sectionName: Data preprocessing
+---
+
+When building machine learning models, there's many problems you can run in to:
+
+* You have to make sure you're transforming the correct features.
+* You have to remember to apply the same transformations to both training and test data.
+* It's harder to deploy your model because you'll have to reimplement preprocessing steps in production.
+* If you forget one step, your model can fail.
+
+**Pipelines** can solve this problem by putting preprocessing and modeling steps into one unified workflow.
+
+## Workflow
+
+Make sure to initialize features `X` and target `y` beforehand:
+
+```py
+X = df.drop('sale_price', axis=1)
+y = df['sale_price']
+```
+
+### Data preprocessing
+
+The <Link href="">`ColumnTransformer`</Link> class is how we will apply different cleaning and preprocessing pipelines all at once on our data.
+
+```py
+from sklearn.compose import ColumnTransformer
+from sklearn.pipeline import Pipeline
+
+numeric_cols = df.select_dtypes(include='number').columns
+categorical_cols = df.select_dtypes(include='object').columns
+
+numeric_transformer = Pipeline([
+    ('imputer', SimpleImputer(strategy='mean')),
+    ('scaler', StandardScaler())
+])
+
+categorical_transformer = Pipeline([
+    ('imputer', SimpleImputer(strategy='constant', fill_value='None')),
+    ('encoder', OrdinalEncoder())
+])
+
+preprocessor = ColumnTransformer(
+    transformers=[
+        ('num', numeric_transformer, numeric_cols),
+        ('cat', categorical_transformer, categorical_cols)
+    ]
+)
+```
+
+You can also use the <Link href="https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.make_pipeline.html">`make_pipeline`</Link> function to create a pipeline.
+
+### Define the model
+
+We'll use random forest for now.
+
+```py
+model = RandomForestRegressor(n_estimators=50, random_state=0)
+```
+
+Soon, you'll try out some regularized linear regression models, which can take more advantage of a normally distributed target.
+
+### Create the full pipeline
+
+Now we can bring together the data preprocessing steps and model.
+
+```py
+pipe = Pipeline([
+    ('preprocessor', preprocessor),
+    ('model', model)
+])
+
+# Preprocess training data and fit model to it
+pipe.fit(X_train, y_train)
+
+# Preprocess validation data and predict
+y_pred = pipe.predict(X_val)
+
+score = mean_absolute_error(y_val, y_pred)
+print(score)
+```
+
+## Conclusion
+
+At this point, you've handled missing values, encoded categorical features, scaled features to improve model performance, and organized everything into a clean pipeline. With preprocessing out of the way, we can move on to feature engineering.

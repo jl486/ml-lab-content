@@ -1,0 +1,100 @@
+---
+id: feature-selection
+name: Feature selection
+description: Find the best features for predicting the target.
+sectionName: Feature engineering
+---
+
+After collecting tons of data to predict house prices (number of bedrooms, lot area, distance to city center, color of front door, the owner's sports team, and so on), you realize that not all of these features are that useful.
+
+To locate the best features for feature engineering, we need a <Link href="/glossary#feature-utility-metric">utility metric</Link>, which quantifies how informative a feature is for predicting the target. This way, we can rank the our features based on their importance.
+
+A great metric to start with is *mutual information*. You can relate mutual information to correlation. But unlike correlation (which only works for linear relationships), mutual information can find *any* dependence between both categorical and continuous variables.
+
+## Mutual information
+
+<Link href="/glossary#mutual-information">Mutual information (MI)</Link> is a measure of how much knowing one variable reduces uncertainty of another variable. In our problem, it tells how useful a feature is for predicting the target. 
+
+For example, if you're trying to guess the price of a house, someone only tells you the **neighorbood** it is in (high MI), you would have a decent shot at guessing the price. But if you were only told the **color of the front door** (low MI), then you would probably have no idea how much the house costs.
+
+Here is a plot showing the relationship between neighborhood and house sale price.
+
+<Image src="/content/courses/02-intermediate-ml/assets/neighborhood-stripplot.png" />
+
+See how the sale prices are grouped in distinct ranges in each neighborhood? That means if we know the neighborhood, we would be more certain about the house price.
+
+### Interpretation
+
+Mutual information between two variables is always non-negative. An MI of 0 indicates that the two variables are independent, so they are not connected at all.
+
+However, there's no specific maximum value for MI. In our case of a regression problem, MI has *no unit* and *no upper limit*, meaning that it's only really useful for ranking features rather than interpreting what the values mean.
+
+Here is a visualization of different features and their MI with the target `y`:
+
+<Image src="/content/courses/02-intermediate-ml/assets/mi-graphs.png" />
+
+## Rank housing data features
+
+Because calculating MI for categorical and continuous targets are quite different, scikit-learn has two different functions for MI: <Link href="https://scikit-learn.org/stable/modules/generated/sklearn.feature_selection.mutual_info_regression.html">`mutual_info_regression()`</Link> and <Link href="https://scikit-learn.org/stable/modules/generated/sklearn.feature_selection.mutual_info_classif.html">`mutual_info_classif()`</Link>.
+
+This is how we can compute and see the MI of each feature with the target:
+
+```py
+from sklearn.feature_selection import mutual_info_regression
+
+X_temp = X.copy()  # So the code below won't mess up the original features
+
+# Simple encoding and imputation to avoid errors
+for col in X_temp.select_dtypes(include=['object', 'category']):
+    X_temp[col], _ = X_temp[col].factorize()
+for col in X_temp.select_dtypes(['number']):
+    X_temp[col] = X_temp[col].fillna(0)
+
+discrete_features = [pd.api.types.is_integer_dtype(t) for t in X_temp.dtypes]
+
+mi_scores = mutual_info_regression(X_temp, y, discrete_features=discrete_features, random_state=0)
+mi_scores = pd.Series(mi_scores, index=X_temp.columns).sort_values(ascending=False)
+print(mi_scores)
+```
+
+## Interaction effect
+
+An interaction effect happens when the impact of one variable on the target depends on another variable. Variables that interact are good candidates for feature engineering and for prediction in general. The problem with MI is that it only looks at each feature individually (univariate ranking) and ignores interactions. This makes interaction features appear unimportant when they are actually very useful.
+
+For example, let's see how the two features `land_slope` and `bldg_type` individually interact with `gr_liv_area`. Both `land_slope` and `bldg_type` have very low MI.
+
+<Image src="/content/courses/02-intermediate-ml/assets/interaction-effect.png" />
+
+<Question>
+  <QuestionDescription>
+    Based on the two plots, which feature has an interaction effect on `gr_liv_area`?
+  </QuestionDescription>
+  <QuestionChoices>
+    <QuestionChoice>
+      `land_slope`
+      <QuestionChoiceExplanation>
+        Since the categories of `land_slope` all show very similar trends, this feature doesn't have an interaction with `gr_liv_area`.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+    <QuestionChoice correct>
+      `bldg_type`
+      <QuestionChoiceExplanation>
+        The categories of `bldg_type` created groups with very different trends, so this feature has an interaction with `gr_liv_area`.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+  </QuestionChoices>
+</Question>
+
+This is why you should always look for interactions between features. A new feature combining `gr_liv_area` and `bldg_type` would reveal new information about the trend of house prices.
+
+To find interactions, you should start with having **domain knowledge** about the problem, such as knowing that
+
+* in our problem, the square footage affects house price differently depending on building type (`gr_liv_area` and `bldg_type`).
+* in a credit scoring problem, high debt matters more for low-income individuals (debt-to-income ratio).
+
+In the dedicated <Link href="/courses/feature-engineering">feature engineering course</Link>, we'll talk about more efficient ways to find feature interactions.
+
+## Conclusion
+
+You've found the most informative features and some interaction features. Dropping the rest of the features may reduce noise and make it easier for your model to generalize on unseen data.
+

@@ -1,0 +1,74 @@
+---
+id: model-evaluation
+name: Model evaluation
+description: Measure the performance of your model so you can compare it with other models.
+sectionName: Machine learning
+---
+
+Previously, we talked about how you shouldn't test your model on training data. So, since we currently don't have new data, how do you test your model properly using the data we have?
+
+## Why model evaluation matters
+
+Training your model is half of the process. It's important to also know how well it will perform on *unseen data*. Model evaluation helps answer:
+
+* Is the model accurate enough for our purpose?
+* will it generalize to real-world data?
+* What model should we use?
+
+## Evaluation metrics
+
+Looking at thousands of predictions individually is impractical, so we use a summary metric. A good choice for <Link href="/glossary#regression-model">regression</Link> is <Link href="/glossary#mean-absolute-error">mean absolute error</Link> (MAE for short). MAE is the average of the absolute differences between predictions and the true values.
+
+For example, if a house sells for \$200000 and the model predicts \$210000, the absolute difference is \$10000 (we ignore whether the error is positive or negative).
+
+This is the formula for MAE:
+
+$$
+\text{MAE} = \frac{1}{n} \sum_{i=1}^{n} \lvert y_i - \hat{y}_i \rvert
+$$
+
+Here, $y$ are the true values, $\hat{y}$ are the predictions, $n$ is the total amount of data points (houses in this case), and $i$ is the index. You will commonly see this notation in ML. This formula is a concise way to say: *on average, the predictions are off by some amount*.
+
+## In-sample evaluation
+
+Let's see the mean absolute error of our model's predictions. Paste and run this code in your notebook:
+
+```py
+from sklearn.metrics import mean_absolute_error
+
+y_pred = model.predict(X)
+print(mean_absolute_error(y, y_pred))
+```
+
+You probably got a very low score. I got an score of `58.87260273972603`.  This score is called an *in-sample* score since we used the same sample of data to both build and test the model.
+
+However, this score is **fake** and doesn't tell us anything about the model's predictive accuracy. But how is it fake?
+
+### Scenario
+
+Suppose your training data includes some houses that sold during a holiday sale with unusually low prices. **All these houses were built in 2010.** So after training, your model thinks that houses built in 2010 are significantly cheaper than, perhaps, a house in built in 2009 or 2011.
+
+This pattern comes from the training data, so the model *seems* accurate. But if this pattern doesn't exist in new data, the model would be noticably inaccurate. 
+
+A model's true practicality is based on its predictive ability on new data. A simple way to properly test this is to hold out a part of the dataset called the <Link href="/glossary#validation-set">validation set</Link> and use *that* to evaluate the model.
+
+## Splitting your data
+
+Use the `train_test_split` function from scikit-learn to split the data:
+
+```py
+from sklearn.model_selection import train_test_split
+
+X_train, X_val, y_train, y_val = train_test_split(X, y, random_state=0)
+
+model = DecisionTreeRegressor(random_state=0)
+model.fit(X_train, y_train)  # Fit to training set
+
+y_pred = model.predict(X_val)  # Predict on validation set instead
+
+print(mean_absolute_error(y_val, y_pred))
+```
+
+When you run this, the score is likely a lot higher. My out-of-sample score was `31909.31506849315`. Don't worry, this is very normal since we haven't made any other improvements to our model.
+
+We will talk about a method to improve our model in the next lesson.

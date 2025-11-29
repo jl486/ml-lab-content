@@ -1,0 +1,64 @@
+---
+id: underfitting-and-overfitting
+name: Underfitting and overfitting
+description: Help your models generalize by fixing underfitting or overfitting issues.
+sectionName: Machine learning
+---
+
+Now that you can measure your model's accuracy, you can test different models to lower the MAE. What options do you have?
+
+## Tuning the model
+
+In scikit-learn's <Link href="https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeRegressor.html">documentation</Link> for `DecisionTreeRegressor`, you will see lots of parameters. The most important one here is `max_leaf_nodes`, which controls how many unique predictions the model is restricted to while training. For example, the decision tree from <Link href="/courses/intro-to-ml/your-first-ml-model">this previous lesson</Link> has `max_leaf_nodes` set to `4`:
+
+<Image src="/content/courses/01-intro-to-ml/assets/decision-tree-big.png" invert />
+
+## Intuition
+
+As you increase `max_leaf_nodes`, the dataset is divided into smaller leaves with fewer houses represented in each.
+
+Imagine a house dataset with 1000 samples. A decision tree with 2 leaves would model 500 houses in each leaf, a decision tree with 4 leaves would model 250 houses in each leaf, and so on.
+
+If you keep on increasing the number of leaves, it can lead to the decision tree fitting the training set *perfectly*, when each leaf is the exact price of a house. This is an extreme example of <Link href="/glossary#overfitting">overfitting</Link>.
+
+If the decision tree is too shallow (such as having only 2 leaves), then each group will still contain very different houses, leading to poor predictions on both the training set and validation set. This is called <Link href="/glossary#underfitting">underfitting</Link>.
+
+This graph below shows errors predicting in the training and validation set as `max_leaf_nodes` increases. Notice how validation error starts increasing at some point even though training error continues to decrease. This is the beginning of overfitting.
+
+<Image src="/content/courses/01-intro-to-ml/assets/underfitting-overfitting.png" />
+
+## Your turn
+
+Update the model you built in the previous lesson to specify a value for `max_leaf_nodes`. Try this question below:
+
+<Question>
+  <QuestionDescription>
+    What value for `max_leaf_nodes` results in the lowest validation MAE?
+  </QuestionDescription>
+  <QuestionChoices>
+    <QuestionChoice>
+      10
+      <QuestionChoiceExplanation>
+        Set your model to `DecisionTreeRegressor(max_leaf_nodes=10, random_state=0)` and compute the MAE on the validation set. Compare the MAE with the rest of the choices. You can look at the graph above too.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+    <QuestionChoice correct>  
+      50
+      <QuestionChoiceExplanation>
+        Out of these choices, `50` offers the best balance between underfitting and overfitting. There's a better number of leaves though, try finding it!
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+    <QuestionChoice>
+      500
+      <QuestionChoiceExplanation>
+        Set your model to `DecisionTreeRegressor(max_leaf_nodes=500, random_state=0)` and compute the MAE on the validation set. Compare the MAE with the rest of the choices. You can look at the graph above and guess the MAE too.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+    <QuestionChoice>
+      1000
+      <QuestionChoiceExplanation>
+        Set your model to `DecisionTreeRegressor(max_leaf_nodes=1000, random_state=0)` and compute the MAE on the validation set. Compare the MAE with the rest of the choices. You can look at the graph above and guess the MAE too.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+  </QuestionChoices>
+</Question>

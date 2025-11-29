@@ -1,0 +1,177 @@
+---
+id: basic-feature-engineering
+name: Basic feature engineering
+description: Create new features to squeeze out more information from data.
+sectionName: Feature engineering
+---
+
+Previously, we located some informative features in our giant dataset. In this lesson, we'll go through some emthods to create new features from the existing ones.
+
+## Using mathematics
+
+Surprisingly, summing together or applying a function on a feature can sometimes make a big improvement.
+
+### Arithmetic combinations
+
+You can combine features using arithmetic (`+`, `-`, `*`, `/`) to create a new feature. The calculation is done row-wise between two columns.
+
+For example, in a dataset with the features **profit** and **cost**, you can create a new **return on investment** feature, which is the ratio of profit and cost:
+
+```py
+df['roi'] = df['profit'] / df['cost']
+```
+
+### Transformations
+
+Applying a function like the logarithm on a skewed feature can improve some models by making the distribution more normal. This is called a **normality transformation**.
+
+Features like income or housing prices are heavily skewed, which can negatively impact the performance of machine learning models that assume a normal distribution, like linear distriminant analysis, Gaussian naive Bayes, and linear regression models (you don't have to know these right now).
+
+The <Link href="/glossary#box-cox-transformation">Box-Cox transformation</Link> is often used for normality transformations because it's very flexible for any type of distribution.
+
+The parameter $\lambda$ allows it to transform different types of distributions to normality. <Link href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PowerTransformer.html">`PowerTransformer`</Link> automatically finds the most optimal $\lambda$ for our distribution and applies the transformation to our features.
+
+```py
+from sklearn.preprocessing import PowerTransformer
+
+skewed_cols = [...]
+
+pt = PowerTransformer(method='box-cox')  # or yeo-johnson if the feature has negative values
+df[skewed_cols] = pt.fit_transform(df[skewed_cols])
+```
+
+Here is an example of a Box-Cox transformation:
+
+<Image src="/content/courses/02-intermediate-ml/assets/box-cox-transformation.png" />
+
+The target may also need to be transformed. However, we usually want predictions to be in the original scale (for example dollars, not log-dollars), so we have to transform it separately from the features. <Link href="https://scikit-learn.org/stable/modules/generated/sklearn.compose.TransformedTargetRegressor.html">`TransformedTargetRegressor`</Link> handles this automatically by applying a transformation during training and inverting it after prediction.
+
+```py
+from sklearn.compose import TransformedTargetRegressor
+
+model = TransformedTargetRegressor(
+    regressor=RandomForestRegressor(n_estimators=50, random_state=0),
+    transformer=PowerTransformer(method='box-cox')
+)
+```
+
+## Group transforms
+
+Group transforms can be used to compute summary statistics of rows grouped in certain categories. This means you can make features like
+
+* average income per job type
+* proportion of sales per store compared to total sales
+* variation in house size per city
+
+As an example, we'll create an *average income per job type* feature called `avg_income_job`. We must
+
+1. Group rows by the categorical feature `job`.
+2. Look at the `income` column within each group.
+3. Use the `mean` function to calculate the average income for that job type.
+
+Here is the code the steps above describe:
+
+```py
+df['avg_income_job'] = df.groupby('job')['income'].transform('mean')
+```
+
+## Check-in
+
+Try a few questions to strengthen your new knowledge of feature engineering.
+
+<Question>
+  <QuestionDescription>
+    In a dataset that has the features `store` and `num_sales`, you want to create a feature called `sales_proportion` that represents each store's total sales divided by the total sales across all stores. What should this feature be set to?
+  </QuestionDescription>
+  <QuestionChoices>
+    <QuestionChoice>
+      ```py
+      df['num_sales'] / df['num_sales'].sum()
+      ```
+      <QuestionChoiceExplanation>
+        This divides *each row's* sales by the total number of sales, so it only calculates the proportion of sales for each product.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+    <QuestionChoice>
+      ```py
+      df.groupby('store')['num_sales'].transform('sum')
+      ```
+      <QuestionChoiceExplanation>
+        This code computes the total number of sales from each store only.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+     <QuestionChoice correct>
+      ```py
+      df.groupby('store')['num_sales'].transform('sum') / df['num_sales'].sum()
+      ```
+      <QuestionChoiceExplanation>
+        This code first computes the total sales for each store, then divides by the total number of sales across all stores, resulting in the proportion we want.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+     <QuestionChoice>
+      ```py
+      df['num_sales'] / df.groupby('store')['num_sales'].transform('sum')
+      ```
+      <QuestionChoiceExplanation>
+        This divides each product's sales by its store's total sales and calculates the wrong proportion.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+  </QuestionChoices>
+</Question>
+
+<Question>
+  <QuestionDescription>
+    How do you create a `porch_types` feature that counts the number of types of porches per house? Note that the porch-related featurs contain the square footage of that porch.
+  </QuestionDescription>
+  <QuestionChoices>
+    <QuestionChoice>
+      ```py
+      df['porch_types'] = df[[
+          'wood_deck_sf', 'open_porch_sf', 'enclosed_porch', '3ssn_porch', 'screen_porch'
+      ]].sum(axis=1)
+      ```
+      <QuestionChoiceExplanation>
+        This sums the *square footage* of the porches, not the count of porch types.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+    <QuestionChoice correct>
+      ```py
+      df['porch_types'] = (df[[
+          'wood_deck_sf', 'open_porch_sf', 'enclosed_porch', '3ssn_porch', 'screen_porch'
+      ]] > 0.0).sum(axis=1)
+      ```
+      <QuestionChoiceExplanation>
+        Both this answer and **D** is correct. Each column is square footage, so you just need to check when it's greater than 0. In the end we just sum the results along the column axis.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+     <QuestionChoice>
+      ```py
+      df['porch_types'] = df[[
+          'wood_deck_sf', 'open_porch_sf', 'enclosed_porch', '3ssn_porch', 'screen_porch'
+      ]].count(axis=1)
+      ```
+      <QuestionChoiceExplanation>
+        This just counts non-missing columns, which is always 5 here.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+     <QuestionChoice correct>
+      ```py
+      df['porch_types'] = df[[
+          'wood_deck_sf', 'open_porch_sf', 'enclosed_porch', '3ssn_porch', 'screen_porch'
+      ]].gt(0).sum(axis=1)
+      ```
+      <QuestionChoiceExplanation>
+        Both this answer and **B** is correct. Each column is square footage, so you just need to check when it's greater than 0 with `gt()` from pandas. In the end, we sum the results along the column axis.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+  </QuestionChoices>
+</Question>
+
+## Conclusion
+
+You've picked up a few fundamental feature engineering techniques now. It's important to understand what model you're using when creating features, so here are some guidelines:
+
+* **Linear models** learn additive features well.
+* **Linear models** usually benefit from normality transformations of skewed data or standardization, but **tree models** don't benefit much.
+* **Tree models** can learn complex feature interactions implicitly through splits, but explicitly creating interaction features can lead to improvements.
+* **Counts** (like in question 2 above) are valuable for **tree models** because they lack natural aggregation in their splitting process.

@@ -1,0 +1,14 @@
+## Box-Cox transformation
+
+Transforms the distribution of non-normal data into a normal distribution.
+
+The transformation is defined as:
+
+$$
+x^{(\lambda)} = \begin{cases}
+  \frac{x^{\lambda} - 1}{\lambda} & \lambda \neq 0 \\
+  \ln(x) & \lambda = 0
+\end{cases}
+$$
+
+The parameter $\lambda$ can be adjusted to maximize normality.

@@ -1,0 +1,17 @@
+## Gradient boosting
+
+An <Link href="/glossary#ensemble">ensemble</Link> training algorithm that creates a powerful model by iteratively adding trees that correct the error of the previous one.
+
+<MiniCollapsible>
+    <MiniCollapsibleTrigger>Pseudocode</MiniCollapsibleTrigger>
+    <MiniCollapsibleContent>
+        1. Start with a constant-value initial prediction $F_0$.
+
+        2. **For** $m = 1$ **to** $M$:
+            1. Compute pseudo-residuals $r_i$, which is gradient of the loss function of w.r.t. current prediction.
+            2. Fit a new learner $h_m(x)$ to the pseudo-residuals.
+            3. Find the best gradient descent multipler $\gamma_m$.
+            4. Update the ensemble $F_m(x) = F_{m-1}(x) + \eta \gamma_m h_m(x)$.
+        1. **Return** $F_M(x)$.
+    </MiniCollapsibleContent>
+</MiniCollapsible>

@@ -1,0 +1,48 @@
+---
+id: setting-up
+name: Setting up
+description: Set up your ML environment.
+sectionName: Getting started
+---
+
+Before we start doing ML, we should have an environment where we can do work without interfering with other things on our computer. In this lesson, you'll set up an environment with Miniconda, which will help manage packages and Python environments.
+
+## Miniconda
+
+**Miniconda** is a smaller version of the full Anaconda Distribution. Don't worry, you won't be missing out on much if you use Miniconda instead of Anaconda.
+
+Both distributions are about the same. The only difference is that Anaconda comes with hundreds of packages installed by default, but Miniconda only has packages we really need.
+
+### Installation
+
+On the official download page <Link href="https://www.anaconda.com/docs/getting-started/miniconda/install">here</Link>, you can find install instructions for your OS. Make sure you installed Miniconda properly by running any comda command such as
+
+```bash
+conda --version
+```
+
+### Set up your environment
+
+We'll create a new conda environment called `ml-lab`. You can call it whatever you'd like.
+
+```bash
+conda create -n ml-lab python=3.11
+```
+
+Activate your environment by running:
+
+```bash
+conda activate ml-lab
+```
+
+Inside the environment, install the main packages we'll be using:
+
+```bash
+conda install numpy pandas matplotlib scikit-learn
+```
+
+## Conclusion
+
+I also recommend using <Link href="https://code.visualstudio.com/">VS Code</Link> as your editor for Python notebooks since they come with a decent interface for `.ipynb` files.
+
+That's it for setting up! We can start exploring some data.

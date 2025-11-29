@@ -1,0 +1,15 @@
+## Min-max scaling
+
+A <Link href="/glossary#scaling">scaling</Link> technique that rescales the values of a feature to be in a fixed range, usually $[0, 1]$.
+
+The formula to transform a raw value $x_i$ in the feature $x$ to be in the range $[a, b]$ is
+
+$$
+x_i' = a + \frac{(x_i - \min(x))(b - a)}{\max(x) - \min(x)}
+$$
+
+where
+
+* $x_i$ is the original value
+* $x$ is the feature
+* $x_i'$ is the new feature

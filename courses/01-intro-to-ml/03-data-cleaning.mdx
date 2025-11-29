@@ -1,0 +1,73 @@
+---
+id: data-cleaning
+name: Data cleaning
+description: Real datasets are often messy, so it's important to be ready to clean your data.
+sectionName: Data
+---
+
+In real life, datasets are often full of issues: missing values, duplicates, inconsistent formatting, and tons more. How can we address some of these issues?
+
+## Missing values
+
+Missing values can cause errors when training a model. You can locate the columns with missing values like this:
+
+```py
+print(df.columns[df.isna().any()])
+```
+
+A simple way to deal with missing values in a dataset is to drop those rows using `dropna()`:
+
+```py
+df = df.dropna(axis=0)  # Or axis=1 for columns
+```
+
+`na` means *not available*. Notice that `df.dropna(axis=0)` is a copy of the original data and doesn't directly modify it, so we must assign it to the original data.
+
+In our housing dataset (and in many cases too), it would *not* be a good idea to drop missing values. Run the code in your notebook and see what happens. Why do you think that happens?
+
+Luckily, there are better ways to deal with missing values (like imputation), which you will learn in <Link href="/courses/intermediate-ml/missing-data">this lesson</Link>.
+
+## Duplicates
+
+Duplicates are important to remove since it can lead to our model to fit too well to training data and perform badly on new data. You can count the number of duplicates with
+
+```py
+df.duplicated().sum()
+```
+
+and remove them like this:
+
+```py
+df = df.drop_duplicates()
+```
+
+## Inconsistencies
+
+Let's see the unique categories in the features `exterior1st` and `exterior2nd`, which represent the exterior covering of the house.
+
+```py
+print(df['exterior1st'].unique())
+print(df['exterior2nd'].unique())
+```
+
+```
+['vinyl_sd' 'metal_sd' 'wd_sdng' 'hd_board' 'brk_face' 'wd_shng'
+ 'cemnt_bd' 'plywood' 'asb_shng' 'stucco' 'brk_comm' 'asph_shn' 'stone'
+ 'im_stucc' 'c_block' nan]
+['vinyl_sd' 'metal_sd' 'wd_shng' 'hd_board' 'plywood' 'wd_sdng' 'cment_bd'
+ 'brk_face' 'stucco' 'asb_shng' 'brk cmn' 'im_stucc' 'asph_shn' 'stone'
+ 'other' 'c_block' nan]
+```
+
+
+If you look at the category `brk cmn` in the column `exterior2nd`, you will see that it doesn't match up with `brk_comm` in `exterior1st` even though these categories refer to the same thing.
+
+We can fix this by replacing occurences of `brk cmn`.
+
+```py
+df['exterior2nd'] = df['exterior2nd'].replace({'brk cmn': 'brk_comm'})
+```
+
+## Conclusion
+
+Now that your data is ready, let's start building your first model!

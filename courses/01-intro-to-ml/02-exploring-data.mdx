@@ -1,0 +1,95 @@
+---
+id: exploring-data
+name: Exploring data
+description: Understand data with pandas.
+sectionName: Data
+---
+
+Starting from this lesson, you will be working on a model and gradually improving it. But before we start building models, we have to familiarize ourselves with data. We'll be using the pandas library for this, along with Matplotlib to create plots.
+
+Throughout the rest of the course, we will use the <Link href="/datasets/housing.csv" download>Ames housing dataset</Link>, which contains <Link href="/glossary#feature">features</Link> of homes in Ames, Iowa, USA. Create a `.ipynb` notebook in the same directory as `housing.csv` to follow along.
+
+## Using pandas
+
+Depending on the path to `housing.csv`, you can load the data like this:
+
+```py
+import pandas as pd
+
+df = pd.read_csv('housing.csv')
+```
+
+To get some information about the features, you can simply run
+
+```py
+df.describe()
+```
+
+Here is a portion of the output:
+
+<Image src="/content/courses/01-intro-to-ml/assets/describe.png" invert />
+
+There are 8 rows with information about the numerical features of our data.
+
+* **count** is the number of rows that have non-null values.
+* **mean** is the average.
+* **std** is the standard deviation, or how spread out the data is.
+* **min** is the smallest value in the column.
+* **25%**, **50%**, and **75%** are percentiles. For example, `58.0`, the 25% percentile of the column `lot_frontage`, is greater than 25% of the values in that column. The 50% is also the median.
+* **max** is the largest value in the column.
+
+## Check-in
+
+These questions will help you think about this new information about our data.
+
+<Question>
+  <QuestionDescription>
+    How many non-null `lot_frontage` values are there?
+  </QuestionDescription>
+  <QuestionChoices>
+    <QuestionChoice>
+      1460
+    </QuestionChoice>
+    <QuestionChoice>  
+      313
+    </QuestionChoice>
+    <QuestionChoice correct>
+      1201
+    </QuestionChoice>
+    <QuestionChoice>
+      67
+    </QuestionChoice>
+  </QuestionChoices>
+</Question>
+
+<Question>
+  <QuestionDescription>
+    Based on the mean and median, the distribution of sales prices (the last column) is
+  </QuestionDescription>
+  <QuestionChoices>
+    <QuestionChoice>
+      symmetric
+      <QuestionChoiceExplanation>
+        This would be true if the mean and median were similar.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+    <QuestionChoice correct>  
+      right skewed
+      <QuestionChoiceExplanation>
+        The mean is much *greater* than the median, so the distribution is right skewed.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+    <QuestionChoice>
+      left skewed
+      <QuestionChoiceExplanation>
+        This would be true if the mean is much *less* than the median.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+    <QuestionChoice>
+      uniform
+      <QuestionChoiceExplanation>
+        It's hard to tell if the distribution is uniform based on the just the mean and median, but it could be uniform if the mean and median are exactly equal.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+  </QuestionChoices>
+</Question>

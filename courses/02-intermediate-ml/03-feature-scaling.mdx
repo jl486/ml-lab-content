@@ -1,0 +1,140 @@
+---
+id: feature-scaling
+name: Feature scaling
+description: Transform numeric features and improve model training.
+sectionName: Data preprocessing
+---
+
+In this lesson, you'll learn a new data preprocessing technique called <Link href="/glossary#scaling">feature scaling</Link>! You'll learn how to **normalize** and do **normality transformations** on your data.
+
+## Normalization
+
+Normalization means to transform features so that their **ranges are similar**. You would do this if you're using a machine learning model that rely on distances between data points such as <Link href="/glossary#k-means-clustering">k-means clustering</Link> or linear regression models. These algorithms will give more influence to features with larger values even though they may not necessarily be that important. Here is a visualization of this with features **age** and **salary**:
+
+<Image src="/content/courses/02-intermediate-ml/assets/k-means-scaling.png" />
+
+K-means clustering groups data points by assigning them to the nearest <Link href="/glossary#centroid">centroid</Link> (cluster center). Why do you think k-means clusters the data into horizontal rows when the features aren't scaled?
+
+Now, let's see some techniques we can use to normalize data.
+
+### Z-score standardization
+
+<Link href="/glossary#z-score-standardization">Z-score standardization</Link> replaces each value in a feature with its **z-score**, the number of standard deviations from the mean. This makes the feature have a mean of 0 and standard deviation of 1.
+
+The z-score of a number $x$ is calculated with this formula:
+
+$$
+z = \frac{x - \mu}{\sigma}
+$$
+
+where $\mu$ is the mean and $\sigma$ is the standard deviation.
+
+We can use <Link href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html">`StandardScaler`</Link> from scikit-learn to do z-score standardization.
+
+```py
+from sklearn.preprocessing import StandardScaler
+
+numeric_cols = df.select_dtypes(include='number').columns
+
+scaler = StandardScaler()
+df[numeric_cols] = pd.DataFrame(scaler.fit_transform(df[numeric_cols]))
+```
+
+### Robust scaling
+
+<Link href="/glossary#robust-scaling">Robust scaling</Link> uses the median and interquartile range to rescale values. Unlike mean and standard deviation (used in z-score standardization), the median and IQR are much less sensitive to outliers. This makes robust scaling a great choice for standardizing features that contain extreme values.
+
+This is how the value $x_i$ in a feature $x$ is robustly scaled:
+
+$$
+x_i' = \frac{x_i - \text{median}(x)}{\text{IQR}(x)}
+$$
+
+$\text{IQR}(x)$ is the difference between the 75th and 25th percentiles.
+
+We can use <Link href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.RobustScaler.html">`RobustScaler`</Link> in the same way as `StandardScaler`.
+
+```py
+from sklearn.preprocessing import RobustScaler
+
+scaler = RobustScaler()
+df[numeric_cols] = pd.DataFrame(scaler.fit_transform(df[numeric_cols]))
+```
+
+### Compare results
+
+This is how the normalization methods above change the distribution of two hypothetical features.
+
+<Image src="/content/courses/02-intermediate-ml/assets/normalization-results.png" />
+
+## When it's unnecessary
+
+Feature scaling isn't always useful. For example, **tree-based models** are less affected by large-valued features because they split on thresholds, so any feature scaling you do wouldn't make much of an impact.
+
+## Check-in
+
+<Question>
+  <QuestionDescription>
+    Which normalization technique would perform better on a skewed house price dataset that contains the top most luxury houses and why?
+  </QuestionDescription>
+  <QuestionChoices>
+    <QuestionChoice correct>
+      Robust scaling because it reduces the impact of outliers.
+      <QuestionChoiceExplanation>
+        Yes! Median and IQR are not affected by outliers by a whole lot.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+    <QuestionChoice>  
+      Z-score standardization because it centers data and reduces skewness.
+      <QuestionChoiceExplanation>
+        Z-sore standardization centers the mean at 0, but the shape of the distribution stays the same.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+    <QuestionChoice>
+      Robust scaling because it can increase the normality of a distribution.
+      <QuestionChoiceExplanation>
+        Robust scaling does handle outliers well, but not by changing the distribution's normality.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+    <QuestionChoice>
+      Z-score standardization beacause it's usually the better choice.
+      <QuestionChoiceExplanation>
+        This depends on the situation. If the data is already normally distributed, then z-scord standardization would work better.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+  </QuestionChoices>
+</Question>
+
+## Conclusion
+
+Here's all the code we wrote for data cleaning and preprocessing:
+
+```py
+from sklearn.impute import SimpleImputer
+from sklearn.preprocessing import OrdinalEncoder, PowerTransformer, RobustScaler
+
+preprocessed_df = df.copy()
+
+numeric_cols = preprocessed_df.select_dtypes(include='number').columns
+categorical_cols = preprocessed_df.select_dtypes(include='object').columns
+
+# Imputation
+numeric_imputer = SimpleImputer(strategy='mean')
+preprocessed_df[numeric_cols] = numeric_imputer.fit_transform(preprocessed_df[numeric_cols])
+
+categorical_imputer = SimpleImputer(strategy='constant', fill_value='None')
+preprocessed_df[categorical_cols] = categorical_imputer.fit_transform(preprocessed_df[categorical_cols])
+
+# Encode categorical features
+encoder = OrdinalEncoder()
+preprocessed_df[categorical_cols] = encoder.fit_transform(preprocessed_df[categorical_cols])
+
+scaler = RobustScaler()
+preprocessed_df[numeric_cols.drop('sale_price')] = scaler.fit_transform(preprocessed_df[numeric_cols.drop('sale_price')])
+
+df = preprocessed_df
+```
+
+All these data preprocessing steps we learned so far is tedious to write. What if I told you that there's a way to put all these steps into just a few lines of code?
+
+In the next lesson, I'll show you how to use a **pipeline** to do this.
