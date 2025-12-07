@@ -10,7 +10,7 @@ In this lesson, you'll learn a new data preprocessing technique called <Link hre
 
 Normalization means to transform features so that their **ranges are similar**. You would do this if you're using a machine learning model that rely on distances between data points such as <Link href="/glossary#k-means-clustering">k-means clustering</Link> or linear regression models. These algorithms will give more influence to features with larger values even though they may not necessarily be that important. Here is a visualization of this with features **age** and **salary**:
 
-<Image src="/content/courses/02-intermediate-ml/assets/k-means-scaling.png" />
+<Image src="/content/courses/intermediate-ml/assets/k-means-scaling.png" />
 
 K-means clustering groups data points by assigning them to the nearest <Link href="/glossary#centroid">centroid</Link> (cluster center). Why do you think k-means clusters the data into horizontal rows when the features aren't scaled?
 
@@ -64,7 +64,7 @@ df[numeric_cols] = pd.DataFrame(scaler.fit_transform(df[numeric_cols]))
 
 This is how the normalization methods above change the distribution of two hypothetical features.
 
-<Image src="/content/courses/02-intermediate-ml/assets/normalization-results.png" />
+<Image src="/content/courses/intermediate-ml/assets/normalization-results.png" />
 
 ## When it's unnecessary
 

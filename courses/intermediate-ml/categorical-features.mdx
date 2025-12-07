@@ -29,7 +29,7 @@ df = df.select_dtypes(exclude='object')
 
 This is the most straightforward way to turn categories into numbers. <Link href="/glossary#ordinal-encoding">Ordinal encoding</Link> replaces a category with a unique number:
 
-<Image src="/content/courses/02-intermediate-ml/assets/ordinal-encoding.png" invert />
+<Image src="/content/courses/intermediate-ml/assets/ordinal-encoding.png" invert />
 
 This example works well because the categories of `satisfaction` have a natural ranking. Variables like this are called <Link href="/glossary#ordinal-variable">ordinal variables</Link>.
 
@@ -57,7 +57,7 @@ Notice that we converted the encoded columns to a DataFrame because `fit_transfo
 
 <Link href="/glossary#one-hot-encoding">One-hot encoding</Link> creates a new column for each unique category in the original feature. It puts a `1` in the column that matches the category, and `0` in all the others.
 
-<Image src="/content/courses/02-intermediate-ml/assets/one-hot-encoding.png" invert />
+<Image src="/content/courses/intermediate-ml/assets/one-hot-encoding.png" invert />
 
 One-hot encoding treats categories as separate binary features. This makes one-hot encoding useful for encoding <Link href="/glossary#nominal-variable">nominal variables</Link>, which *don't* have an inherent ordering (red is greater than blue doesn't make sense).
 

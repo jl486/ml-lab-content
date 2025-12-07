@@ -10,7 +10,7 @@ Now that you can measure your model's accuracy, you can test different models to
 
 In scikit-learn's <Link href="https://scikit-learn.org/stable/modules/generated/sklearn.tree.DecisionTreeRegressor.html">documentation</Link> for `DecisionTreeRegressor`, you will see lots of parameters. The most important one here is `max_leaf_nodes`, which controls how many unique predictions the model is restricted to while training. For example, the decision tree from <Link href="/courses/intro-to-ml/your-first-ml-model">this previous lesson</Link> has `max_leaf_nodes` set to `4`:
 
-<Image src="/content/courses/01-intro-to-ml/assets/decision-tree-big.png" invert />
+<Image src="/content/courses/intro-to-ml/assets/decision-tree-big.png" invert />
 
 ## Intuition
 
@@ -24,7 +24,7 @@ If the decision tree is too shallow (such as having only 2 leaves), then each gr
 
 This graph below shows errors predicting in the training and validation set as `max_leaf_nodes` increases. Notice how validation error starts increasing at some point even though training error continues to decrease. This is the beginning of overfitting.
 
-<Image src="/content/courses/01-intro-to-ml/assets/underfitting-overfitting.png" />
+<Image src="/content/courses/intro-to-ml/assets/underfitting-overfitting.png" />
 
 ## Your turn
 

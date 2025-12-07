@@ -18,7 +18,7 @@ Most machine learning models can't handle data with missing values. Scikit-learn
 
 The simplest method is to **drop missing columns**, which we talked about in the <Link href="/courses/intro-to-ml/data-cleaning#missing-values">data cleaning</Link> lesson from the previous course:
 
-<Image src="/content/courses/02-intermediate-ml/assets/dropna-cols.png" invert />
+<Image src="/content/courses/intermediate-ml/assets/dropna-cols.png" invert />
 
 Most of the time, you should avoid dropping columns. But if a column has too many missing values (like 90% missing) and doesn't give much information about the target, it makes sense to drop it.
 
@@ -28,7 +28,7 @@ We're not considering dropping **rows** here because the only case when you woul
 
 Instead of dropping columns, we can use <Link href="/glossary#imputation">imputation</Link>, which **fills missing values** with some number. Here is an example of imputation that fills missing values with the mean of the column:
 
-<Image src="/content/courses/02-intermediate-ml/assets/imputation.png" invert />
+<Image src="/content/courses/intermediate-ml/assets/imputation.png" invert />
 
 Imputation often leads to more accurate models than if you just dropped missing rows or columns. But imputation might not be good if there's too much missing data.
 

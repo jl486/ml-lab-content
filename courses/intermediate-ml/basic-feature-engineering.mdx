@@ -41,7 +41,7 @@ df[skewed_cols] = pt.fit_transform(df[skewed_cols])
 
 Here is an example of a Box-Cox transformation:
 
-<Image src="/content/courses/02-intermediate-ml/assets/box-cox-transformation.png" />
+<Image src="/content/courses/intermediate-ml/assets/box-cox-transformation.png" />
 
 The target may also need to be transformed. However, we usually want predictions to be in the original scale (for example dollars, not log-dollars), so we have to transform it separately from the features. <Link href="https://scikit-learn.org/stable/modules/generated/sklearn.compose.TransformedTargetRegressor.html">`TransformedTargetRegressor`</Link> handles this automatically by applying a transformation during training and inverting it after prediction.
 
