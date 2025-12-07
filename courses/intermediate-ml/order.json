@@ -13,6 +13,6 @@
   },
   {
     "section": "Common mistakes",
-    "lessons": ["data-leakages"]
+    "lessons": ["data-leakage"]
   }
 ]
