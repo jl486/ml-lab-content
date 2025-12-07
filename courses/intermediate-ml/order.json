@@ -1,0 +1,18 @@
+[
+  {
+    "section": "Data preprocessing",
+    "lessons": ["missing-data", "categorical-features", "feature-scaling", "pipelines"]
+  },
+  {
+    "section": "Feature engineering",
+    "lessons": ["feature-selection", "basic-feature-engineering"]
+  },
+  {
+    "section": "Machine learning",
+    "lessons": ["xgboost", "cross-validation"]
+  },
+  {
+    "section": "Common mistakes",
+    "lessons": ["data-leakages"]
+  }
+]

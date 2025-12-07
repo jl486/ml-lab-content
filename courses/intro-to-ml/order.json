@@ -1,0 +1,14 @@
+[
+  {
+    "section": "Getting started",
+    "lessons": ["setting-up"]
+  },
+  {
+    "section": "Data",
+    "lessons": ["exploring-data", "data-cleaning"]
+  },
+  {
+    "section": "Machine learning",
+    "lessons": ["your-first-ml-model", "model-evaluation", "underfitting-and-overfitting", "random-forests"]
+  }
+]
