@@ -1,0 +1,120 @@
+---
+id: conditional-probability
+name: Conditional probability
+description: An event occurring given that another event occurred.
+---
+
+**Conditional probability** is the probability of an event $A$ happening *given that* an event $B$ happened. It is written as $P(A | B)$.
+
+## Definition
+
+It is the ratio of the probability of both $A$ and $B$ occurring siultaneously and the probability of $B$:
+
+$$
+P(A | B) = \frac{P(A \cap B)}{P(B)}
+$$
+
+<Image src="/content/courses/05-probability/assets/conditional.png" invert />
+
+## Independence
+
+The events $A$ and $B$ are independent if and only if
+
+$$
+P(A \cap B) = P(A)P(B)
+$$
+
+If $A$ and $B$ are independent, then $P(A | B) = P(A)$.
+
+## Bayes' theorem
+
+Since $P(A \cap B) = P(A | B)P(B) = P(B | A)P(A)$ by the product rule, we can also write that
+
+$$
+P(A | B) = \frac{P(B | A)P(A)}{P(B)}
+$$
+
+Bayes' theorem can do many things that the definition of conditional probability by itself cannot. There's even an entire field of statistics about it (Bayesian statistics)!
+
+A simple use case is reversing a conditional probability. For example, if you know $P(\text{positive test} | \text{disease})$ but want $P(\text{disease} | \text{positive test})$.
+
+In <Link href="/glossary#supervised-learning">, its used in the naive Bayes algorithm.
+
+### Extended Bayes' theorem
+
+Given a set of mutually-exclusive events $A_1, A_2, \dots, A_n$, we have
+
+$$
+P(A_i | B) = \frac{P(B | A_i)P(A_i)}{\sum_j P(B | A_j) P(A_j)}
+$$
+
+## Check-in
+
+<Question>
+  <QuestionDescription>
+    Let $A$ be the event of rolling an odd number on a die, and $B$ be the event of rolling a 3. Are $A$ and $B$ independent?
+  </QuestionDescription>
+  <QuestionChoices>
+    <QuestionChoice>
+      Yes
+      <QuestionChoiceExplanation>
+        Does the result being an odd number affect the probability of the result being 3?
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+    <QuestionChoice correct>
+      No
+      <QuestionChoiceExplanation>
+        Nice! We know that $P(A \cap B) = P(B)$ because 3 itself is an odd number, and we see that $P(A \cap B) = P(A)P(B)$ is false.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+  </QuestionChoices>
+</Question>
+
+<Question>
+  <QuestionDescription>
+    You toss a coin 3 times. Given that you got at least one heads, what's the probability of getting two heads in total?
+  </QuestionDescription>
+  <QuestionChoices>
+    <QuestionChoice correct>
+      $\frac{4}{7}$
+    </QuestionChoice>
+    <QuestionChoice>
+      $\frac{7}{16}$
+      <QuestionChoiceExplanation>
+        Let $A_1$ be the event where you get at least one heads and $A_2$ be the event where you get at least two heads. By going through the 8 possibilities for coin flips, you should get $P(A_1) = \frac{7}{8}$ and $P(A_2) = \frac{4}{8}$. Make sure you calculated $P(A_2 | A_1)$ correctly.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+    <QuestionChoice>
+      $\frac{2}{7}$
+      <QuestionChoiceExplanation>
+        Let $A_1$ be the event where you get at least one heads and $A_2$ be the event where you get at least two heads. By going through the 8 possibilities for coin flips, you should get $P(A_1) = \frac{7}{8}$ and $P(A_2) = \frac{4}{8}$. Make sure you calculated $P(A_2 | A_1)$ with the conditional probability definition.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+    <QuestionChoice>
+      $\frac{7}{32}$
+      <QuestionChoiceExplanation>
+        Let $A_1$ be the event where you get at least one heads and $A_2$ be the event where you get at least two heads. By going through the 8 possibilities for coin flips, you should get $P(A_1) = \frac{7}{8}$ and $P(A_2) = \frac{4}{8}$. Make sure you calculated $P(A_2 | A_1)$ with the conditional probability definition.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+  </QuestionChoices>
+</Question>
+
+<Question>
+  <QuestionDescription>
+    A factory produces parts using Machine A, which makes $70\%$ of the parts with a $2\%$ defect rate, and Machine B, which makes $30\%$ of the parts with a $5\%$ defect rate. If a randomly selected part is *defective*, what is the probability it came from Machine B?
+  </QuestionDescription>
+  <QuestionChoices>
+    <QuestionChoice correct>
+      $0.52$
+    </QuestionChoice>
+    <QuestionChoice>
+      $0.45$
+    </QuestionChoice>
+    <QuestionChoice>
+      $0.30$
+    </QuestionChoice>
+    <QuestionChoice>
+      $0.14$
+    </QuestionChoice>
+  </QuestionChoices>
+</Question>

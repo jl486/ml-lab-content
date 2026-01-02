@@ -2,5 +2,9 @@
   {
     "category": "Foundational courses",
     "courses": ["intro-to-ml", "intermediate-ml"]
+  },
+  {
+    "category": "Review",
+    "courses": ["probability"]
   }
 ]

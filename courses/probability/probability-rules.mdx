@@ -1,0 +1,106 @@
+---
+id: probability-rules
+name: Probability rules
+description: Useful formulas in probability.
+---
+
+Let's briefly go over some rules of probability.
+
+Note that $P(A \cap B) = P(A, B)$, since sometimes equations are more clear with commas.
+
+## Complement rule
+
+The probability of event $A$ not happening is
+
+$$
+P(A^c) = 1 - P(A)
+$$
+
+<Image src="/content/courses/05-probability/assets/complement.png" invert />
+
+We can prove this with the <Link href="/courses/probability/probability-axioms#second-axiom">second axiom</Link> of probability.
+
+## Addition rule
+
+Given events $A$ and $B$, if they are *mutually exclusive*, then we know from the <Link href="/courses/probability/probability-axioms#third-axiom">third axiom</Link> that
+
+$$
+P(A \cup B) = P(A) + P(B)
+$$
+
+<Image src="/content/courses/05-probability/assets/addition.png" invert />
+
+but if they are *not* mutually exclusive, then
+
+$$
+P(A \cup B) = P(A) + P(B) - P(A \cap B)
+$$
+
+because we are double-counting the probability of both events happening at the same time.
+
+<Image src="/content/courses/05-probability/assets/addition-intersect.png" invert />
+
+## Chain rule
+
+Given events $A_1, A_2, \dots A_n$, the probability of all the events happening at the same time is
+
+$$
+P(A_1, A_2, \dots, A_n) = P(A_1)P(A_2 | A_1)P(A_3 | A_2,A_1) \cdots P(A_n | A_{n-1}, \dots, A_1)
+$$
+
+The chain rule is a generalization of the product rule:
+
+$$
+P(A, B) = P(A | B)P(B)
+$$
+
+## Check-in
+
+<Question>
+  <QuestionDescription>
+    You draw two random cards from a 52-card deck without replacement. What is the probability of the cards being both aces?
+  </QuestionDescription>
+  <QuestionChoices>
+    <QuestionChoice>
+      $\frac{4}{52} \cdot \frac{4}{52}$
+    </QuestionChoice>
+    <QuestionChoice correct>
+      $\frac{4}{52} \cdot \frac{3}{51}$
+    </QuestionChoice>
+     <QuestionChoice>
+      $\frac{4}{52} \cdot \frac{4}{51}$
+    </QuestionChoice>
+     <QuestionChoice>
+      $\frac{4}{52} \cdot \frac{3}{52}$
+    </QuestionChoice>
+  </QuestionChoices>
+</Question>
+
+<Question>
+  <QuestionDescription>
+    Given events $A$ and $B$, if $P(A) = 0.41$, $P(B) = 0.53$, $P(A \cap B) = 0.20$, and $P(A^c \cap B^c) = 0.25$, what is the probability that only $A$ or only $B$ individually happens?
+  </QuestionDescription>
+  <QuestionChoices>
+    <QuestionChoice>
+      $0.50$
+      <QuestionChoiceExplanation>
+        The problem is essentially asking for $P((A \cup B) \cap (A \cap B)^c)$. Once you have $P(A \cup B)$, it will be straightforward.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+    <QuestionChoice>
+      $0.54$
+      <QuestionChoiceExplanation>
+        The problem is essentially asking for $P((A \cup B) \cap (A \cap B)^c)$. Once you have $P(A \cup B)$, it will be straightforward.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+     <QuestionChoice correct>
+      $0.55$
+    </QuestionChoice>
+     <QuestionChoice>
+      $0.74$
+      <QuestionChoiceExplanation>
+        The problem is essentially asking for $P((A \cup B) \cap (A \cap B)^c)$. Once you have $P(A \cup B)$, it will be straightforward.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+  </QuestionChoices>
+</Question>
