@@ -6,8 +6,6 @@ description: Useful formulas in probability.
 
 Let's briefly go over some rules of probability.
 
-Note that $P(A \cap B) = P(A, B)$, since sometimes equations are more clear with commas.
-
 ## Complement rule
 
 The probability of event $A$ not happening is
@@ -45,13 +43,13 @@ because we are double-counting the probability of both events happening at the s
 Given events $A_1, A_2, \dots A_n$, the probability of all the events happening at the same time is
 
 $$
-P(A_1, A_2, \dots, A_n) = P(A_1)P(A_2 | A_1)P(A_3 | A_2,A_1) \cdots P(A_n | A_{n-1}, \dots, A_1)
+P(A_1 \cap A_2 \cap \dots \cap A_n) = P(A_1)P(A_2 | A_1)P(A_3 | A_2 \cap A_1) \cdots P(A_n | A_{n-1} \cap \dots \cap A_1)
 $$
 
 The chain rule is a generalization of the product rule:
 
 $$
-P(A, B) = P(A | B)P(B)
+P(A \cap B) = P(A | B)P(B)
 $$
 
 ## Check-in
