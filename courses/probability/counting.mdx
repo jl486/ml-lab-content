@@ -1,0 +1,208 @@
+---
+id: counting
+name: Counting
+description: Count collections of huge things.
+---
+
+## Basic counting principles
+
+### multiplicative principle
+
+The multiplicative princple states that if a process has $k$ stages with $n_1, n_2, \dots, n_k$ possible outcomes for each stage respectively, then the process can occur in $n_1 n_2 \cdots n_k$ ways.
+
+For example, how do we find how many different 6-digit passwords are possible? Each digit is from 0-9. Because there are 6 times we select a digit, and that digit has 10 different possibilities, the total number of possible passwords is $10^6$.
+
+### Factorial
+
+The factorial of $n$ is the product of all positive integers less than or equal to $n$:
+
+$$
+n! = n \cdot (n - 1) \cdot (n - 2) \cdot \cdots \cdot 2 \cdot 1
+$$
+
+This is useful because it gives us the number of permutations (number of ways you can arrange) of all $n$ items.
+
+For example, suppose you have 4 books and want to arrange all of them in a shelf. You have 4 choices for the book in the first position. After choosing a book already, you now have 3 choices for the second position. Then you have 2 choices, then 1. Therefore, there are $4! = 4 \cdot 3 \cdot 2 \cdot 1$ ways to arrange the 4 books.
+
+## Permutations
+
+If you have $n$ distinct elements, and you want to choose and arrange $k$ of them, where different orders count as different outcomes, then the number of permutations
+
+$$
+P(n, k) = \frac{n!}{(n - k)!}
+$$
+
+### Derivation
+
+Imagine you have $k$ blank slots that you want to fill with objects from a collection of $n$ distinct objects. You have $n$ choices for the first slot. Since $n - 1$ now remain, you have $n - 1$ choices for the second slot. For the $k$-th object, you'll have $n - k + 1$ choices. By the multiplicative principle, the number of ways we can choose objects is
+
+$$
+P(n, k) = n(n - 1)(n - 2)  \cdots (n - k + 1)
+$$
+
+Multiply the numerator and denominator by $(n - k)!$ to get
+
+$$
+P(n, k) = \frac{n(n - 1)(n - 2)  \cdots (n - k + 1)(n - k)!}{(n - k!)}
+$$
+
+The numerator is the definition of $n!$, so we finally get
+
+$$
+P(n, k) = \frac{n!}{(n - k)!}
+$$
+
+## Combinations
+
+The number of combinations is how many ways you can choose $k$ items from a collection of $n$ items.
+
+$$
+\begin{pmatrix} 
+n \\
+k
+\end{pmatrix} = \frac{n!}{k!(n - k)!}
+$$
+
+### Derivation
+
+We can derive this by expressing the number of $k$-permutations of $n$ items in terms of combinations.
+
+First, we select $k$ items for the permutation. There's
+$\big(\begin{smallmatrix} 
+n \\
+k
+\end{smallmatrix}\big)$
+ways to do this. After that, we know there are $k!$ ways to permute each choice of those $k$ items. Then, we have another permutation formula:
+
+$$
+P(n, k) =
+\begin{pmatrix} 
+n \\
+k
+\end{pmatrix}
+\cdot k!
+$$
+
+Dividing both sides by $k!$ will then get us the combination formula.
+
+## Partitions
+
+Suppose you have 120 distinctly-labeled apples and are distributing them evenly into 10 boxes. In how many ways can you do this?
+
+Since each box gets the same number of apples, each box will have $\frac{120}{10} = 12$ apples. We also know that there are $120!$ ways to arrange all the apples. Because we don't care about the order of the apples within each box, we must also divide by $12!$ for each box. The number of ways is then:
+
+$$
+\frac{120!}{(12!)^{10}}
+$$
+
+### General case
+
+The number of ways we can partition $n$ distinct items into $k$ groups of sizes $n_1, n_2, \dots, n_k$ is
+
+$$
+\begin{pmatrix} 
+n \\
+n_1, n_2, \dots, n_k
+\end{pmatrix} =
+\frac{n!}{n_1!n_2! \cdots n_k!}
+$$
+
+This is also called the *multinomial coefficient*.
+
+## Discrete uniform distributions
+
+When every outcome of event $A$ is equally likely, the situation is called a *discrete uniform distribution*. In this case,
+
+$$
+P(E) = \frac{\text{number of outcomes in event}~A}{\text{number of outcomes in sample space}~\Omega}
+$$
+
+This means that counting alone is enough to calculate probabilities.
+
+## Check-in
+
+<Question>
+  <QuestionDescription>
+    A secret laboratory assigns a random 4-digit entry code to employees to its employees every day. Each digit is from 0-9, and no digits are repeated. What is the probability that an employee is assigned a code with the digits 6, 7, 8, and 9, where 9 is the first digit?
+  </QuestionDescription>
+  <QuestionChoices>
+    <QuestionChoice>
+      $\frac{1}{210}$
+      <QuestionChoiceExplanation>
+        Make sure you consider that 9 being the first digit.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+    <QuestionChoice choice>
+      $\frac{1}{840}$
+      <QuestionChoiceExplanation>
+        Yes! If 9 is the first digit, then the remaining digits 6, 7, and 8 can be arranged in $3! = 6$ ways. The number of 4-digit codes that can be made with all ten digits is $P(10, 4) = 5040$. So, the answer is $\frac{6}{5040} = \frac{1}{840}$.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+    <QuestionChoice>
+      $\frac{1}{5040}$
+      <QuestionChoiceExplanation>
+        Make sure to count how many permutations of 6, 7, and 8 exist.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+    <QuestionChoice>
+      $\frac{6}{3024}$
+      <QuestionChoiceExplanation>
+        Computation mistake?
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+  </QuestionChoices>
+</Question>
+
+<Question>
+  <QuestionDescription>
+    How many shortest lattice paths start at $(0, 0)$ and end at $(8, 9)$?
+  </QuestionDescription>
+  <QuestionChoices>
+    <QuestionChoice>
+      $\begin{pmatrix} 
+      8 \\
+      9
+      \end{pmatrix}$
+      <QuestionChoiceExplanation>
+        This is impossible; you can't choose 8 from 9.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+    <QuestionChoice>
+      $\begin{pmatrix} 
+      9 \\
+      8
+      \end{pmatrix}$
+      <QuestionChoiceExplanation>
+        This only counts how many ways to choose 8 moves out of only 9 moves. The shortest lattice path requires 17 moves, so we have to choose 8 right moves from 17 moves.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+    <QuestionChoice correct>
+      $\begin{pmatrix} 
+      17 \\
+      8
+      \end{pmatrix}$
+      <QuestionChoiceExplanation>
+        The shortest path has 8 right moves and 9 up moves. This correctly counts the number of ways to choose which 8 of the 17 moves are right moves.
+        $\big(\begin{smallmatrix} 
+        17 \\
+        9
+        \end{smallmatrix}\big)$
+        is also correct.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+    <QuestionChoice correct>
+      $\begin{pmatrix} 
+      17 \\
+      9
+      \end{pmatrix}$
+      <QuestionChoiceExplanation>
+        The shortest path has 8 right moves and 9 up moves. This correctly counts the number of ways to choose which 9 of the 17 moves are up moves.
+        $\big(\begin{smallmatrix} 
+        17 \\
+        8
+        \end{smallmatrix}\big)$
+        is also correct.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+  </QuestionChoices>
+</Question>
