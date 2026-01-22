@@ -4,11 +4,13 @@ name: Conditional probability
 description: An event occurring given that another event occurred.
 ---
 
-**Conditional probability** is the probability of an event $A$ happening *given that* an event $B$ happened. It is written as $P(A | B)$.
+If we learn more information about an event, how should we update the probability of that event?
+
+This idea can be represented with **conditional probability**, which is the probability of an event $A$ happening *given that* an event $B$ happened. We write this as $P(A | B)$.
 
 ## Definition
 
-It is the ratio of the probability of both $A$ and $B$ occurring simultaneously and the probability of $B$:
+**Conditional probability** the ratio of the probability of both $A$ and $B$ occurring simultaneously and the probability of $B$:
 
 $$
 P(A | B) = \frac{P(A \cap B)}{P(B)}
@@ -18,13 +20,13 @@ $$
 
 ## Independence
 
-The events $A$ and $B$ are independent if and only if
+To know that conditional probability would be useful in a situation, we must know if the events are *dependent*. So, the events $A$ and $B$ are **independent** if and only if
 
 $$
 P(A \cap B) = P(A)P(B)
 $$
 
-If $A$ and $B$ are independent, then $P(A | B) = P(A)$.
+If $A$ and $B$ are independent, then $P(A | B) = P(A)$ would also be true.
 
 ## Bayes' theorem
 
@@ -34,19 +36,13 @@ $$
 P(A | B) = \frac{P(B | A)P(A)}{P(B)}
 $$
 
+to arrive at Bayes' theorem.
+
 Bayes' theorem can do many things that the definition of conditional probability by itself cannot. There's even an entire field of statistics about it (Bayesian statistics)!
 
-A simple use case is reversing a conditional probability. For example, if you know $P(\text{positive test} | \text{disease})$ but want $P(\text{disease} | \text{positive test})$.
+A simple use case is reversing a conditional probability. For example, if you know $P(\text{positive test} | \text{disease})$ and want $P(\text{disease} | \text{positive test})$.
 
-In <Link href="/glossary#supervised-learning">supervised learning</Link>, its used in the naive Bayes algorithm.
-
-### Extended Bayes' theorem
-
-Given a set of mutually-exclusive events $A_1, A_2, \dots, A_n$, we have
-
-$$
-P(A_i | B) = \frac{P(B | A_i)P(A_i)}{\sum_j P(B | A_j) P(A_j)}
-$$
+This theorem has important applications in machine learning too. In <Link href="/glossary#supervised-learning">supervised learning</Link>, it's used in the naive Bayes algorithm for classification.
 
 ## Check-in
 
@@ -109,12 +105,21 @@ $$
     </QuestionChoice>
     <QuestionChoice>
       $0.45$
+      <QuestionChoiceExplanation>
+        Let $P(A) = 0.7$, $P(B) = 0.3$, $P(D | A) = 0.02$, and $P(D | B) = 0.05$. We want to find $P(B | D)$. We could use Bayes' theorem if we have $P(D)$.
+      </QuestionChoiceExplanation>
     </QuestionChoice>
     <QuestionChoice>
       $0.30$
+      <QuestionChoiceExplanation>
+        Let $P(A) = 0.7$, $P(B) = 0.3$, $P(D | A) = 0.02$, and $P(D | B) = 0.05$. We want to find $P(B | D)$. We could use Bayes' theorem if we have $P(D)$.
+      </QuestionChoiceExplanation>
     </QuestionChoice>
     <QuestionChoice>
       $0.14$
+      <QuestionChoiceExplanation>
+        Let $P(A) = 0.7$, $P(B) = 0.3$, $P(D | A) = 0.02$, and $P(D | B) = 0.05$. We want to find $P(B | D)$. We could use Bayes' theorem if we have $P(D)$.
+      </QuestionChoiceExplanation>
     </QuestionChoice>
   </QuestionChoices>
 </Question>
