@@ -2,5 +2,9 @@
   {
     "section": "Introduction",
     "lessons": ["probability-axioms", "probability-rules", "counting", "conditional-probability"]
+  },
+  {
+    "section": "Random variables",
+    "lessons": ["intro-random-variables"]
   }
 ]
