@@ -1,0 +1,272 @@
+---
+id: expected-value-and-variance
+name: Expected value and variance
+description: Learn about the long-term average outcome of a random process and other related statistics.
+---
+
+When we have a large collection of numbers, we are often interested in summary statistics such as the mean or median and not individual numbers. The same idea is true for probability distributions of random variables.
+
+In this lesson, we'll go over **expected value** and **variance**.
+
+## Scenario
+
+Imagine you are at a carnival, and you find a game. The game work as follows: after a fee of $\text{\textdollar 2}$ dollars, you get to roll a fair six-sided die. If you roll a 6, you win $\text{\textdollar 10}$ dollars. Otherwise, you win nothing. Do you think this game is reasonable to play?
+
+### Simulation
+
+Let's run a simulation to see the average winnings from playing this game.
+
+<MiniCollapsible>
+  <MiniCollapsibleTrigger>Simulation code</MiniCollapsibleTrigger>
+  <MiniCollapsibleContent>
+    ```py
+    import random
+
+    def simulate_game(n_trials):
+        w = 0
+        for _ in range(n_trials):
+            r = random.randint(1, 6)
+            if r == 6:
+                w += 8
+            else:
+                w -= 2
+        return w / n_trials
+    ```
+  </MiniCollapsibleContent>
+</MiniCollapsible>
+
+| Trials | Average winnings |
+|--------|------------------|
+| $10$   | `1.0`            |
+| $10^2$ | `-0.6`           |
+| $10^3$ | `-0.2`           |
+| $10^4$ | `-0.308`         |
+| $10^5$ | `-0.3247`        |
+| $10^6$ | `-0.33586`       |
+| $10^7$ | `-0.333712`      |
+
+We see that after playing the game 10 times, it appears to be favorable. But as we play the game more and more, the results become consistently unfavorable, and our average winnings seems to converge to $-\frac{1}{3}$.
+
+Since we will roll a 6 $\frac{1}{6}$ of the time and a 1 to 5 $\frac{5}{6}$ of the time, the average winnings over a very large number of plays should be roughly
+
+$$
+-2\left(\frac{5}{6}\right) + 10\left(\frac{1}{6}\right) = -\frac{1}{3}.
+$$
+
+This long-term average of the winnings is the **expected value**.
+
+## Expected value
+
+### Definition
+
+Let $X$ be a discrete random variable with sample space $\Omega$ and a PMF $p(x)$. The **expected value** of $X$ is:
+
+$$
+\mathbb{E}[X] = \sum_{x \in \Omega} x p(x).
+$$
+
+In a similar manner, if $X$ was a continuous random variable with a PDF $f(x)$, then
+
+$$
+\mathbb{E}[X] = \int_{-\infty}^{\infty} x f(x) \,dx.
+$$
+
+### Example
+
+This time there will only a discrete example since both types are conceptually similar.
+
+Suppose we keep tossing a fair coin until we get heads. Let $X$ be the number of tosses that were made. Then the PMF of $X$ is defined as
+
+$$
+p(x) = \frac{1}{2^x},
+$$
+
+where $x \in \{1, 2, \dots\}$. We find that
+
+$$
+\begin{aligned}
+\mathbb{E}[X] &= \sum_{i=1}^{\infty} i \frac{1}{2^i} \\[2mm]
+              &= \frac{1}{2} + \left(\frac{1}{2^2} + \frac{1}{2^2}\right) + \left(\frac{1}{2^3} + \frac{1}{2^3} + \frac{1}{2^3}\right) + \cdots \\[2mm]
+              &= \sum_{i=1}^{\infty} \frac{1}{2^i} + \sum_{i=2}^{\infty} \frac{1}{2^i} + \cdots \\[2mm]
+              &= 2
+\end{aligned}
+$$
+
+This tells us that, over a lot of trials, we would have tossed the coin an average of $2$ times before getting heads.
+
+### Properties
+
+Below are a few important properties of expected value.
+
+* $\mathbb{E}[aX + bY] = a\mathbb{E}[X] + b\mathbb{E}[Y]$, where $a$ and $b$ are constants.
+
+* $\mathbb{E}[c] = c$, where $c$ is a constant.
+
+* If $X$ and $Y$ are *independent*, then $\mathbb{E}[XY] = \mathbb{E}[X]\mathbb{E}[Y]$. Note that this is not true the other way around.
+
+* Given a discrete random variable $X$ with sample space $\Omega$ and PMF $p(x)$, $\mathbb{E}[f(X)] = \sum_{x \in \Omega} f(x)p(x)$.
+
+* $\mathbb{E}[X]$ exists if it converges. Otherwise $\mathbb{E}[X]$ is undefined.
+
+## Variance
+
+Expected value is very useful since we know the outcome of a random variable will usually not deviate far from it. It is also important to know that we could measure the amount of deviation with *variance*.
+
+Let $X$ be a random variable. The variance of $X$, denoted by $\text{Var}[X]$ or $\sigma_X^2$, is
+
+$$
+\text{Var}[X] = \mathbb{E}[(X - \mathbb{E}[X])^2] = \mathbb{E}[X^2] - \mathbb{E}[X]^2.
+$$
+
+### Covariance
+
+A generalization of variance for *two* random variables is **covariance**. If $X$ and $Y$ are random variables, the covariance is written as $\text{Cov}[X, Y]$ or $\sigma_{XY}$ and is defined as
+
+$$
+\text{Cov}[X, Y] = \mathbb{E}[(X - \mathbb{E}[X])(Y - \mathbb{E}[Y])] = \mathbb{E}[XY] - \mathbb{E}[X]\mathbb{E}[Y].
+$$
+
+While this section is quite short, covariance is a actually a very important statistical measure and gives us useful information about the relationship of two random variables. When
+
+* $\text{Cov}[X, Y] > 0$, $X$ and $Y$ tend to increase together.
+* $\text{Cov}[X, Y] < 0$, one tends to increase while the other decreases.
+* $\text{Cov}[X, Y] = 0$, no linear relationship exists.
+
+### Properties
+
+* $\text{Var}[X] \geq 0$ always.
+
+* $\text{Var}[X + Y] = \text{Var}[X] + \text{Var}[Y] + 2\text{Cov}[X, Y]$
+
+* $\text{Var}[cX] = c^2\text{Var}[X]$.
+
+* $\text{Var}[c] = 0$.
+
+## Standard deviation
+
+The standard deviation of $X$, denoted by $\sigma_X$, is
+
+$$
+\sigma_X = \sqrt{\text{Var}[X]}.
+$$
+
+Standard deviation could sometimes be useful because its value is in the same units as $X$, making more interpretable than variance.
+
+## Practice
+
+*Problem 1.* One of ten similar keys open a door. If you try each key one after the other, what's the expected number of keys that you will have to try before successfully opening the door?
+
+<MiniCollapsible>
+  <MiniCollapsibleTrigger>Solution</MiniCollapsibleTrigger>
+  <MiniCollapsibleContent>
+    The probability of the $k$-th key being the correct one is $\frac{1}{10}$. The expected value is
+
+    $$
+    \sum_{k=1}^{10} k \frac{1}{10} = 5.5
+    $$
+  </MiniCollapsibleContent>
+</MiniCollapsible>
+
+*Problem 2.* Let $X$ be a number chosen at random from the set $S = \{-1, 0, 1, 2\}$. What is the variance of $X$?
+
+<MiniCollapsible>
+  <MiniCollapsibleTrigger>Solution</MiniCollapsibleTrigger>
+  <MiniCollapsibleContent>
+    We will use $\text{Var}[X] = \mathbb{E}[(X - \mathbb{E}[X])^2]$ for this problem. First find $\mathbb{E}[X]$.
+
+    $$
+    \mathbb{E}[X] = \frac{-1 + 0 + 1 + 2}{4} = \frac{1}{2}
+    $$
+
+    Now we calculate each $(X - \mathbb{E}[X])^2$, or the squared deviations from the mean.
+
+    $$
+    \begin{aligned}
+    \left(-1 - \frac{1}{2}\right)^2 &= \frac{9}{4} \\
+    \left(0 - \frac{1}{2}\right)^2 &= \frac{1}{4} \\
+    \left(1 - \frac{1}{2}\right)^2 &= \frac{1}{4} \\
+    \left(2 - \frac{1}{2}\right)^2 &= \frac{9}{4} \\
+    \end{aligned}
+    $$
+
+    The average of these deviations is then
+
+    $$
+    \mathbb{E}[(X - \mathbb{E}[X])^2] = \frac{1}{4}\left(\frac{9}{4} + \frac{1}{4} + \frac{1}{4} + \frac{9}{4}\right) = \frac{1}{4} \cdot \frac{20}{4} = \frac{5}{4}
+    $$
+  </MiniCollapsibleContent>
+</MiniCollapsible>
+
+*Problem 3.* Let $X$ be a random variable with range $[-1. 1]$ and let $f_X(x) = \frac{3}{2}x^2$ be the probability density function for $X$. What is the variance of $X$?
+
+<MiniCollapsible>
+  <MiniCollapsibleTrigger>Solution</MiniCollapsibleTrigger>
+  <MiniCollapsibleContent>
+    For this problem, it would be easier to use $\text{Var}[X] = \mathbb{E}[X^2] - \mathbb{E}[X]^2$. First we will find $\mathbb{E}[X]$:
+
+    $$
+    \mathbb{E}[X] = \int_{-1}^{1} x \cdot \frac{3}{2}x^2 \,dx = \frac{3}{2} \int_{-1}^{1} x^3 \,dx = 0
+    $$
+
+    Then find $\mathbb{E}[X^2]$:
+
+    $$
+    \mathbb{E}[X^2] = \int_{-1}^{1} x^2 \cdot \frac{3}{2}x^2 \,dx = \frac{3}{2} \int_{-1}^{1} x^4 \,dx = \frac{3}{5}
+    $$
+
+    Finally,
+    
+    $$
+    \text{Var}[X] = \mathbb{E}[X^2] - \mathbb{E}[X]^2 = \frac{3}{5} - 0^2 = \frac{3}{5}
+    $$
+  </MiniCollapsibleContent>
+</MiniCollapsible>
+
+*Problem 4.* A die is rolled twice. Let $X$ be the sum of the two resulting numbers, and let $Y$ be the difference. What is $\mathbb{E}[XY]$?
+
+<MiniCollapsible>
+  <MiniCollapsibleTrigger>Solution</MiniCollapsibleTrigger>
+  <MiniCollapsibleContent>
+    $X$ and $Y$ are not independent, so we cannot assume $\mathbb{E}[XY] = \mathbb{E}[X]\mathbb{E}[Y]$.
+
+    Let $R_1$ be the outcome of the first roll and $R_2$ be the second roll. Then, we can write $XY$ as
+
+    $$
+    \begin{aligned}
+    XY &= (R_1 + R_2)(R_1 - R_2) \\[2mm]
+       &= R_1^2 - R_2^2
+    \end{aligned}
+    $$
+
+    Now take the expectation:
+
+    $$
+    \begin{aligned}
+    \mathbb{E}[XY] &= E\left[R_1^2 - R_2^2\right] \\[2mm]
+                   &= \mathbb{E}[R_1^2] - \mathbb{E}[R_2^2]
+    \end{aligned}
+    $$
+
+    And because the outcomes of the dice are identically distributed, $\mathbb{E}[R_1^2] = \mathbb{E}[R_2^2]$. So, $\mathbb{E}[XY] = 0$.
+  </MiniCollapsibleContent>
+</MiniCollapsible>
+
+<Question>
+  <QuestionDescription>
+    *Challenge.* Let $X$ and $Z$ be random variables variance $\sigma_X^2$ and $\sigma_Z^2$ respectively. Let $Y = aX + bZ$ for constants $a, b \in \mathbb{R}$ and correlation coefficient $\rho = \frac{\sigma_{XY}}{\sigma_X \sigma_Y}$. What is $\text{Var}(X + Y)$?
+  </QuestionDescription>
+  <QuestionChoices>
+    <QuestionChoice>
+      $(1+a)^2 \sigma_X^2 + b^2 \sigma_Z^2 + 2b\rho\sigma_X\sigma_Z$
+    </QuestionChoice>
+    <QuestionChoice>
+      $\sigma_X^2 + a^2 \sigma_X^2 + b^2 \sigma_Z^2 + 2ab\rho\sigma_X\sigma_Z$
+    </QuestionChoice>
+    <QuestionChoice correct>
+      $(1+a)^2 \sigma_X^2 + b^2 \sigma_Z^2 + 2(1+a)b\rho\sigma_X\sigma_Z$
+    </QuestionChoice>
+    <QuestionChoice>
+      $(1+a)\sigma_X^2 + b\sigma_Z^2 + \rho\sigma_X\sigma_Z$
+    </QuestionChoice>
+  </QuestionChoices>
+</Question>
