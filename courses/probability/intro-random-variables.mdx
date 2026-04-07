@@ -10,7 +10,7 @@ $$
 X_1 + X_2
 $$
 
-would represent the sum of the two die rolls. Here, $X_1$ and $X_2$ are *random variables*. A **random variable**, put simply, is a function whose output value is an outcome of a particular experiment.
+would represent the sum of the two die rolls. Here, $X_1$ and $X_2$ are *random variables*. A **random variable** is a function whose output value is an outcome of a particular experiment.
 
 ## Types
 
@@ -23,7 +23,11 @@ Random variables can be either *discrete* or *continuous*.
 
 A **probability distribution** describes how the probabilities are spread out over the possible values of a random variable. This essentially defines the random variable.
 
+In machine learning, probability distributions are important for visualizing and analyzing variables in a dataset.
+
 ### Discrete random variables
+
+#### Probability mass function
 
 For a discrete random variable $X$, its distribution is given by the **probability mass function (PMF)**, which takes in a value $x$ and tells you the probability of the random variable $X$ being equal to that value:
 
@@ -33,8 +37,10 @@ $$
 
 A PMF must satisfy these conditions:
 
-* non-negativity: $p_X(x) \gt 0$ for all $x \in \Omega$
-* total probability: $\sum_{x \in \Omega} p_X(x) = 1$
+* $p_X(x) > 0$ for all $x \in \Omega$
+* $\sum_{x \in \Omega} p_X(x) = 1$
+
+#### Cumulative distribution function
 
 What if we wanted to find the probability of outcomes in an interval or below a certain threshold? We can find these probabilities with the **cumulative distribution function (CDF)**, which adds up the probabilities of all possible values of $X$ that is at or below a specific threshold:
 
@@ -59,6 +65,8 @@ $$
 ### Continuous random variables
 
 The ideas related to discrete random variables are pretty similar to its continuous counterpart. Except, a PMF wouldn't work for continuous random variables because the probability that the variable equals a single value is zero, which doesn't make sense in practice.
+
+#### Probability density function
 
 Instead of a PMF, continuous random variables have a **probability density function (PDF)**. This function describes how the probability is spread out rather than at singular values.
 
@@ -89,33 +97,33 @@ $$
 
 #### Example
 
-Let $X$ represent the lifetime, in hours, of a light bulb made with a newly-designed material. After lots of experimenting, scientists found the the PDF of $X$ to be
+Let $X$ represent the lifetime, in hours, of a light bulb made with a novel material. After lots of experimenting, scientists found the the PDF of $X$ to be close to
 
 $$
 f_X(x) = \begin{cases}
 \frac{1}{2}e^{-\frac{x}{2}} & x \geq 0 \\[2mm]
-0                           & x \lt 0
+0                           & x < 0
 \end{cases}
 $$
 
-The scientists want us find the probability that a randomly-selected light bulb lasts $5$ hours or more. We can find the probabiliy like this:
+The scientists want to find the probability that a randomly-selected light bulb lasts $5$ hours or more. We can find the probability like this:
 
 $$
 \begin{aligned}
 P(X \geq 5) &= \int_{5}^{\infty} \frac{1}{2}e^{-\frac{x}{2}} \,dx \\[2mm]
             &= \lim_{t \to \infty} \left(-e^{-\frac{t}{2}} - \left(-e^{-\frac{5}{2}}\right)\right) \\[2mm]
             &= e^{-\frac{5}{2}} \\[2mm]
-            &\approx 0.08208
+            &\approx 0.08
 \end{aligned}
 $$
 
-Therefore, a randomly-selected light bulb has about an $8.21%$ chance of lasting $5$ or more hours.
+Therefore, a randomly-selected light bulb has about an $8.21\%$ chance of lasting $5$ or more hours.
 
-## Check-in
+## Practice
 
 <Question>
   <QuestionDescription>
-    Is *year* (such as $2000, 2001, 2002, \dots$) a discrete or continuous variable?
+    *Problem 1.* Is *year* (such as $2000, 2001, 2002$ and so on) a discrete or continuous variable?
   </QuestionDescription>
   <QuestionChoices>
     <QuestionChoice correct>
@@ -128,6 +136,93 @@ Therefore, a randomly-selected light bulb has about an $8.21%$ chance of lasting
       Continuous
       <QuestionChoiceExplanation>
         In this problem, year would be discrete because they are countably infinite. But in machine learning, it's sometimes be useful to treat year as a continuous variable.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+  </QuestionChoices>
+</Question>
+
+*Problem 2.* A biased coin has probability $p$ of landing on heads. The coin is flipped repeatedly until the first head appears. Let $X$ be the number of flips made. what is the PMF of $X$?
+
+<MiniCollapsible>
+  <MiniCollapsibleTrigger>Solution</MiniCollapsibleTrigger>
+  <MiniCollapsibleContent>
+    To solve this, we need to find the probability of each outcome.
+
+    To get heads on the $k$-th flip, the first $k-1$ flips must all be tails. The probability of flipping tails is $1-p$, so the probability of flipping heads $k-1$ times in a row is $(1-p)^{k-1}$. The $k$-th flip must be heads, which has a probability of $p$.
+
+    Multiplying these probabilities gives us the PMF
+
+    $$
+    p_X(k) = (1-p)^{k-1}p,
+    $$
+
+    where $k \in \{1, 2, 3, \dots\}$.
+  </MiniCollapsibleContent>
+</MiniCollapsible>
+
+*Problem 3.* Let $X$ be a continuous random variable with the PDF $f_X(x) = \frac{c}{x(x+1)}$, where $x \geq 1$. Which of the following is a possible value for $c$?
+
+<MiniCollapsible>
+  <MiniCollapsibleTrigger>Solution</MiniCollapsibleTrigger>
+  <MiniCollapsibleContent>
+    The problem is asking for a value for $c$ that makes $f_X(x)$ a valid PDF. This means it must satisfy the conditions
+    
+    $$
+    f_X(x) > 0 \; \forall x, \qquad \int_{-\infty}^{\infty} f_X(x) \,dx = 1.
+    $$
+
+    Since $x > 1$ always, the denominator is also always positive, so non-negativity is already satisfied. Now, let's find a value for $c$ where the second condition is satisfied by setting up and solving the equation
+
+    $$
+    \begin{align*}
+    \int_{1}^{\infty} \frac{c}{x(x+1)} \,dx                           &= 1 \\[4mm]
+    c \int_{1}^{\infty} \left(\frac{1}{x} - \frac{1}{x+1}\right) \,dx &= 1 \\[4mm]
+    \lim_{t \to \infty} c(\ln(x) - \ln(x+1))|_1^t                     &= 1 \\[4mm]
+    c \ln(2)                                                          &= 1 \\[4mm]
+    c                                                                 &= \frac{1}{\ln(2)}
+    \end{align*}
+    $$
+  </MiniCollapsibleContent>
+</MiniCollapsible>
+
+<Question>
+  <QuestionDescription>
+    *Challenge.* Let $X$ be a uniformly distributed random variable on $[-1, 1]$. Which of the following is the PDF of $Y = X^2$ given $0 < y \leq 1$?
+    
+    Hint: if $f_Y(y) = P(-g(X) \leq X \leq g(X))$, what is $g(X)$?
+  </QuestionDescription>
+  <QuestionChoices>
+    <QuestionChoice>
+      $f_Y(y) = \sqrt{y}$
+      <QuestionChoiceExplanation>
+      $\sqrt{y}$ is the CDF of $Y$.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+    <QuestionChoice>
+      $f_Y(y) = \frac{1}{\sqrt{y}}$
+    </QuestionChoice>
+    <QuestionChoice>
+      $f_Y(y) = \frac{1}{2}$
+      <QuestionChoiceExplanation>
+      This is a uniform distribution. Since $Y = X^2$, it cannot be uniform.
+      </QuestionChoiceExplanation>
+    </QuestionChoice>
+    <QuestionChoice correct>
+      $f_Y(y) = \frac{1}{2\sqrt{y}}$
+      <QuestionChoiceExplanation>
+        Since $Y = X^2$, we can see that
+        $$
+        \begin{align*}
+        F_Y(y) &= P(Y \leq y) \\
+               &= P(X^2 \leq y) \\
+               &= P(|X| \leq y) \\
+               &= P(-\sqrt{y} \leq X \leq \sqrt{y})
+        \end{align*}
+        $$
+        
+        Using the definition $P(a \leq X \leq b) = F_X(b) - F_X(a)$, we can say that $F_Y(y) = F_X(\sqrt{y}) - F_X(-\sqrt{y})$. Recall that $X$ is uniform on $[-1, 1]$, so $F_X(x) = \frac{x - a}{b - a} = \frac{x + 1}{2}$. With this, we see that $F_Y(y) = \sqrt{y}$.
+
+        Finally, differentiating $F_Y(y)$ gives us $f_Y(y) = \frac{1}{2\sqrt{y}}$.
       </QuestionChoiceExplanation>
     </QuestionChoice>
   </QuestionChoices>
