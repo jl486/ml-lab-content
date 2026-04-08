@@ -4,7 +4,7 @@
     "courses": ["intro-to-ml", "intermediate-ml"]
   },
   {
-    "category": "Review",
+    "category": "Prerequisites",
     "courses": ["probability"]
   }
 ]
